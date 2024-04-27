@@ -55,7 +55,7 @@ ROOT_URLCONF = 'ArtN7.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [BASE_DIR / 'catalog/templates']
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -101,6 +101,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# To avoid limit in uploading large files
+DATA_UPLOAD_MAX_MEMORY_SIZE = None
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

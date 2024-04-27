@@ -1,0 +1,472 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .drop-area {
+            width: 300px;
+            height: 500px;
+            border: 2px dashed #ccc;
+            text-align: center;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .highlight-box {
+            position: absolute;
+            border: 2px dashed #000;
+            pointer-events: none;
+        }
+
+        #preview-image {
+            margin: 10px;
+            position: relative;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<h1>INSERISCI UN NUOVO TITOLO</h1>
+
+<form action="{% url 'upload_function' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <label for="title">Titolo: </label>
+    <input type="text" id="title" name="title" placeholder="Inserisci il titolo del film">
+    <br><br>
+
+    <label for="original_title">Titolo originale: </label>
+    <input type="text" id="original_title" name="original_title" placeholder="Inserisci il titolo originale del film">
+    <br><br>
+
+    <label for="year">Anno di produzione: </label>
+    <input type="number" id="year" name="year" placeholder="Inserisci l'anno di produzione">
+    <br><br>
+
+    <div id="countries_div">
+        <label for="countries">Paesi di produzione</label>
+        <div>
+            <select id="countries" name="countries"></select>
+            <button type="button" onclick="removeDiv(this)">Elimina</button>
+        </div>
+    </div>
+    <button type="button" onclick="addSelect('countries', 'countries_div')">Aggiungi un paese</button>
+    <br><br>
+
+    <div id="directors_div">
+        <label for="directors">Registi: </label>
+        <div>
+            <input type="text" name="directors" placeholder="Inserisci i registi">
+            <button type="button" onclick="removeDiv(this)">Elimina</button>
+        </div>
+    </div>
+    <button type="button" onclick="addInput('directors', 'directors_div')">Aggiungi un regista</button>
+    <br><br>
+
+    <div id="screenwriters_div">
+        <label for="screenwriters">Sceneggiatori: </label>
+        <div>
+            <input type="text" id="screenwriters" name="screenwriters" placeholder="Inserisci gli sceneggiatori">
+            <button type="button" onclick="removeDiv(this)">Elimina</button>
+        </div>
+    </div>
+    <button type="button" onclick="addInput('screenwriters', 'screenwriters_div')">Aggiungi uno sceneggiatore</button>
+    <br><br>
+
+    <div id="actors_div">
+        <label for="actors">Attori principali: </label>
+        <div>
+            <input type="text" id="actors" name="actors" placeholder="Inserisci gli attori principali">
+            <button type="button" onclick="removeDiv(this)">Elimina</button>
+        </div>
+    </div>
+    <button type="button" onclick="addInput('actors', 'actors_div')">Aggiungi un attore</button>
+    <br><br>
+
+
+    <label for="saga">Saga cinematografica: </label>
+    <input type="text" id="saga" name="saga" placeholder="Inserisci la saga a cui appartiene (opzionale)">
+    <br><br>
+
+    <div id="genres_div">
+        <label for="genres">Generi: </label>
+        <div>
+            <select id="genres" name="genres"></select>
+            <button type="button" onclick="removeDiv(this)">Elimina</button>
+        </div>
+    </div>
+    <button type="button" onclick="addSelect('genres', 'genres_div')">Aggiungi un genere</button>
+    <br><br>
+
+    <label for="imdb_id">ID IMDb: </label>
+    <input type="text" id="imdb_id" name="imdb_id" placeholder="Inserisci l'ID del film su IMDb">
+    <button type="button" onclick="imdbAutoFill()">Cerca su IMDb</button>
+    <br><br>
+
+    <label for="rating">Valutazione: </label>
+    <input type="hidden" id="rating" name="rating" value="1">
+    <button type="button" name="star" onclick="setNewRating('1', this)">1</button>
+    <button type="button" name="star" onclick="setNewRating('2', this)">2</button>
+    <button type="button" name="star" onclick="setNewRating('3', this)">3</button>
+    <button type="button" name="star" onclick="setNewRating('4', this)">4</button>
+    <button type="button" name="star" onclick="setNewRating('5', this)">5</button>
+    <button type="button" name="star" onclick="setNewRating('6', this)">6</button>
+    <button type="button" name="star" onclick="setNewRating('7', this)">7</button>
+    <button type="button" name="star" onclick="setNewRating('8', this)">8</button>
+    <button type="button" name="star" onclick="setNewRating('9', this)">9</button>
+    <button type="button" name="star" onclick="setNewRating('10', this)">10</button>
+    <br><br>
+
+    <label for="poster">Carica una copertina: </label>
+    {#    <input type="file" id="poster" name="poster">#}
+    <div id="drop-area" class="drop-area" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <p>Drag & Drop Image Here</p>
+        <img id="preview-image" class="hidden" width="250px">
+        <input type="hidden" id="poster" name="poster">
+        <div id="highlight-box" class="highlight-box hidden"></div>
+    </div>
+    {#    <input type="file" id="file-input" name="image" accept="image/*">#}
+    <br><br>
+
+    <h2>Carica file del Film</h2>
+    <label for="movie-input-tag">Etichetta:</label>
+    <input type="text" id="movie-input-tag">
+    <label for="movie-input-type">Formato: </label>
+    <select id="movie-input-type">
+        <option value="VIDEO">Video</option>
+        <option value="AUDIO">Audio</option>
+        <option value="SUBS">Subtitles</option>
+        <option value="OTHER">Other</option>
+    </select>
+    <input type="file" id="movie-input" name="movies"><br><br>
+
+
+    <h2>File Caricati</h2>
+    <table id="file-table">
+        <tr>
+            <th>Nome File</th>
+            <th>Dimensione</th>
+            <th>Tipo MIME</th>
+            <th>Azioni</th>
+        </tr>
+    </table>
+
+    <button type="submit">INSERISCI</button>
+</form>
+
+<script>
+    let all_genres = [];
+    let all_countries = [];
+    let all_countries_code = {};
+
+
+    fetch("{% static 'files/genres.txt' %}")
+        .then(response => response.text())
+        .then(data => {
+            const select = document.getElementById('genres');
+            const values = data.split('\n');
+            values.forEach(value => insertOptionInSelect(value, select));
+
+            all_genres = values;
+        });
+
+    fetch("{% static 'files/countries.csv' %}")
+        .then(response => response.text())
+        .then(data => {
+            const select = document.getElementById('countries');
+            const values = data.split("\n");
+            values.forEach(value => {
+                let codes = value.split(";");
+                insertOptionInSelect(codes[1], select);
+
+                all_countries_code[codes[0]] = codes[1];
+                all_countries.push(codes[1]);
+            });
+        })
+
+    function setNewRating(n, button) {
+        document.getElementById('rating').value = n;
+        document.getElementsByName('star').forEach(value => value.removeAttribute('disabled'));
+        button.setAttribute('disabled', true);
+    }
+
+    function imdbAutoFill() {
+        let imdbId = document.getElementById('imdb_id').value;
+
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function () {
+            let json_response = JSON.parse(this.response)
+            document.getElementById("title").value = json_response.title;
+            document.getElementById("original_title").value = json_response.original_title;
+            document.getElementById("year").value = json_response.year;
+
+            // fill director fields
+            let current_directors_tags = document.getElementsByName('directors');
+            while (current_directors_tags.length > 0) {
+                removeDiv(current_directors_tags[0].parentElement.getElementsByTagName('button')[0]);
+            }
+            json_response.directors.forEach(() => addInput('directors', 'directors_div'));
+            let directors_tags = document.getElementsByName('directors');
+            for (let i = 0; i < json_response.directors.length; i++) {
+                directors_tags[i].value = json_response.directors[i];
+            }
+
+            // fill screenwriter fields
+            let current_writers_tags = document.getElementsByName('screenwriters');
+            while (current_writers_tags.length > 0) {
+                removeDiv(current_writers_tags[0].parentElement.getElementsByTagName('button')[0]);
+            }
+            json_response.screenwriters.forEach(() => addInput('screenwriters', 'screenwriters_div'));
+            let screenwriters_tags = document.getElementsByName('screenwriters');
+            for (let i = 0; i < json_response.screenwriters.length; i++) {
+                screenwriters_tags[i].value = json_response.screenwriters[i];
+            }
+
+            // fill actor fields
+            let current_actor_tags = document.getElementsByName('actors');
+            while (current_actor_tags.length > 0) {
+                removeDiv(current_actor_tags[0].parentElement.getElementsByTagName('button')[0]);
+            }
+            json_response.actors.forEach(() => addInput('actors', 'actors_div'));
+            let actors_tags = document.getElementsByName('actors');
+            for (let i = 0; i < json_response.actors.length; i++) {
+                actors_tags[i].value = json_response.actors[i];
+            }
+
+            // fill country fields
+            let current_country_tags = document.getElementsByName('countries');
+            while (current_country_tags.length > 0) {
+                removeDiv(current_country_tags[0].parentElement.getElementsByTagName('button')[0]);
+            }
+            json_response.countries.forEach(() => addSelect('countries', 'countries_div'));
+            let countries_tags = document.getElementsByName('countries');
+            for (let i = 0; i < json_response.countries.length; i++) {
+                countries_tags[i].value = all_countries_code[json_response.countries[i]];
+            }
+
+            // fill genre fields
+            let current_genre_tags = document.getElementsByName('genres');
+            while (current_genre_tags.length > 0) {
+                removeDiv(current_genre_tags[0].parentElement.getElementsByTagName('button')[0]);
+            }
+            json_response.genres.forEach(() => addSelect('genres', 'genres_div'));
+            let genres_tags = document.getElementsByName('genres');
+            for (let i = 0; i < json_response.genres.length; i++) {
+                genres_tags[i].value = json_response.genres[i];
+            }
+
+            // simulate the drop of the imdb poster
+            const dropArea = document.getElementById('drop-area');
+            const dataTransfer = new DataTransfer();
+            const file = base64toFile(json_response.poster, "poster.jpg", "image/jpeg")
+            dataTransfer.items.add(file);
+
+            const dropEvent = new DragEvent('drop', {
+                dataTransfer: dataTransfer,
+                bubbles: true,
+                cancelable: true
+            });
+            dropArea.dispatchEvent(dropEvent);
+            document.getElementById('file-input').dispatchEvent(new CustomEvent('change', {}));
+        }
+        xhttp.open("GET", "/catalog/imdb_search/" + imdbId);
+        xhttp.send();
+    }
+
+    function insertOptionInSelect(value, select) {
+        const option = document.createElement('option');
+        option.text = value;
+        select.add(option);
+    }
+
+    function addInput(name, div_name) {
+        let container = document.getElementById(div_name);
+        let inputDiv = document.createElement("div");
+        let input = document.createElement("input");
+        let removeButton = document.createElement("button");
+
+        input.type = "text";
+        input.name = name;
+        input.placeholder = "Nome";
+
+        removeButton.type = "button";
+        removeButton.textContent = "Elimina";
+        removeButton.onclick = function () {
+            removeDiv(this);
+        };
+
+        inputDiv.appendChild(input);
+        inputDiv.append("\n");
+        inputDiv.appendChild(removeButton);
+        container.appendChild(inputDiv);
+    }
+
+    function addSelect(name, div_name) {
+        let container = document.getElementById(div_name);
+        let selectDiv = document.createElement("div");
+        let select = document.createElement("select");
+        let removeButton = document.createElement("button");
+
+        select.name = name;
+        if (name === "countries") {
+            all_countries.forEach(value => insertOptionInSelect(value, select));
+        } else if (name === "genres") {
+            all_genres.forEach(value => insertOptionInSelect(value, select));
+        }
+
+        removeButton.type = "button";
+        removeButton.textContent = "Elimina";
+        removeButton.onclick = function () {
+            removeDiv(this);
+        };
+
+        selectDiv.appendChild(select);
+        selectDiv.append("\n");
+        selectDiv.appendChild(removeButton);
+        container.appendChild(selectDiv);
+    }
+
+    function removeDiv(button) {
+        button.parentNode.parentNode.removeChild(button.parentNode);
+    }
+
+    function base64toFile(base64Image, filename, mimeType) {
+        const byteCharacters = atob(base64Image);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], {type: mimeType});
+
+        return new File([blob], filename, {type: mimeType});
+    }
+
+
+    function dragOverHandler(event) {
+        event.preventDefault();
+    }
+
+    function dropHandler(event) {
+        event.preventDefault();
+
+        const files = event.dataTransfer.files;
+        const file = files[0];
+
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const dropArea = document.getElementById('drop-area');
+                const previewImage = document.getElementById('preview-image');
+                const highlightBox = document.getElementById('highlight-box');
+                const inputBase64 = document.getElementById('poster');
+
+                {#dropArea.classList.add('hidden');#}
+                previewImage.src = e.target.result;
+                inputBase64.value = e.target.result;
+                previewImage.classList.remove('hidden');
+                highlightBox.classList.remove('hidden');
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+
+    document.getElementById('movie-input').addEventListener('change', function () {
+        const files = document.getElementById('movie-input').files;
+        var tag = document.getElementById('movie-input-tag').value;
+        var type = document.getElementById('movie-input-type').value;
+
+        const fileReader = new FileReader();
+        fileReader.onload = function (e) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onload = function () {
+                updateTable(files[0])
+            }
+            xhttp.open("POST", "/catalog/upload_temp_file/" + files[0].name);
+            xhttp.setRequestHeader("Movie-Tag", tag);
+            xhttp.setRequestHeader("Movie-Type", type);
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
+            xhttp.send(e.target.result);
+        }
+        fileReader.readAsArrayBuffer(files[0]);
+    });
+
+    function updateTable(file) {
+        var table = document.getElementById('file-table');
+        var row = table.insertRow(-1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        cell1.innerHTML = file.name;
+        cell2.innerHTML = (file.size / 1024).toFixed(2) + ' KB';
+        cell3.innerHTML = file.type || 'N/A';
+        var deleteBtn = document.createElement('button');
+        deleteBtn.innerHTML = 'Elimina';
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function () {
+                var row = deleteBtn.parentNode.parentNode;
+                row.parentNode.removeChild(row);
+            }
+            xhttp.open("GET", "/catalog/remove_temp_file/" + file.name);
+            xhttp.send();
+        });
+        cell4.appendChild(deleteBtn);
+    }
+
+    function getCookie(c_name) {
+        let c_start;
+        let c_end;
+        if (document.cookie.length > 0) {
+            c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start !== -1) {
+                c_start = c_start + c_name.length + 1;
+                c_end = document.cookie.indexOf(";", c_start);
+                if (c_end === -1) c_end = document.cookie.length;
+                return unescape(document.cookie.substring(c_start, c_end));
+            }
+        }
+        return "";
+    }
+
+    {#document.getElementById('drop-area').addEventListener('click', function () {#}
+    {#    document.getElementById('file-input').click();#}
+    {#);#}
+
+    {#document.getElementById('file-input').addEventListener('change', function () {#}
+    {#    const file = this.files[0];#}
+    {##}
+    {#    if (file.type.startsWith('image/')) {#}
+    {#        const reader = new FileReader();#}
+    {##}
+    {#        reader.onload = function (e) {#}
+    {#            const dropArea = document.getElementById('drop-area');#}
+    {#            const previewImage = document.getElementById('preview-image');#}
+    {#            const highlightBox = document.getElementById('highlight-box');#}
+    {##}
+    {#dropArea.classList.add('hidden');#}
+    {#            previewImage.src = e.target.result;#}
+    {#            previewImage.classList.remove('hidden');#}
+    {#            highlightBox.classList.remove('hidden');#}
+    {#        };#}
+    {##}
+    {#        reader.readAsDataURL(file);#}
+    {#    }#}
+    {# });#}
+</script>
+
+</body>
+</html>

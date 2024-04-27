@@ -62,9 +62,13 @@ class Saga(models.Model):
 
 
 class File(models.Model):
+    TYPE_CHOICES = {'VIDEO': 'Video',
+                    'AUDIO': 'Audio',
+                    'SUBS': 'Subtitles',
+                    'OTHER': 'Other'}
     file_name_text = models.CharField(max_length=2048)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    type_text = models.CharField(max_length=1024)
+    type_text = models.CharField(max_length=1024, choices=TYPE_CHOICES)
     tag_text = models.CharField(max_length=1024)
     hash_text = models.CharField(max_length=512)
 

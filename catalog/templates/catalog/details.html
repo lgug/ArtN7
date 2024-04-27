@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <h2>{{ movie.title_text }}</h2>
+    <p><b>Titolo originale</b>: {{ movie.original_title_text }}</p>
+    <p><b>Anno di produzione</b>: {{ movie.year_integer }}</p>
+    <p><b>Paesi di produzione</b>: {{ countries }}</p>
+    <p><b>Generi</b>: {{ genres }}</p>
+    <p><b>Registi</b>: {{ directors }}</p>
+    <p><b>Sceneggiatori</b>: {{ screenwriters }}</p>
+    <p><b>Attori principali</b>: {{ actors }}</p>
+    <p><b>Valutazione</b>: {{ movie.rating_integer }}</p>
+    <p><b>IMDb ID</b>: {{ movie.imdb_id_text }}</p>
+    <img src="{{ movie.poster_text }}" id="poster" width="400" style="position: absolute" alt="Movie poster">
+
+    <h3>Film associati a questo titolo:</h3>
+    <ul>
+        {% for x in videos %}
+        <li>{{ x.filename }} {{ x.size }} {{ x.tag }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Altri file</h3>
+
+
+</body>
+</html>

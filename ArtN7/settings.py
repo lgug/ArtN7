@@ -55,7 +55,7 @@ ROOT_URLCONF = 'ArtN7.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'catalog/templates']
+        'DIRS': [BASE_DIR / 'catalog/templates', BASE_DIR / 'admin/templates']
         ,
         'APP_DIRS': True,
         'OPTIONS': {

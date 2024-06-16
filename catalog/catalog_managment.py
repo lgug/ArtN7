@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 import requests
 
 from catalog.models import File
+from catalog.project_utils.filemanager import sanitize_filename
 
 
 def retrieve_info_from_imdb(imdb_id):
@@ -92,10 +93,10 @@ def save_movie_files(movie):
     shutil.rmtree("temp")
 
 
-def sha256sum(filename):
+def sha256sum(file_path):
     h = hashlib.sha256()
 
-    with open(filename, 'rb') as file:
+    with open(file_path, 'rb') as file:
         while True:
             chunk = file.read(h.block_size)
             if not chunk:
@@ -115,26 +116,3 @@ def get_meta_file():
             elements[split[0]] = [split[1], split[2].replace('\n', '')]
 
     return elements
-
-
-def sanitize_filename(filename, tag, extra_char=" ()"):
-    filename = (filename.replace('<', '')
-                .replace('>', '')
-                .replace(':', '')
-                .replace('"', '')
-                .replace('/', '')
-                .replace('\\', '')
-                .replace('|', '')
-                .replace('?', '*'))
-    tag = tag + extra_char
-
-    if len(filename) == 0:
-        filename = "Unencodable movie title"
-
-    tag_len_in_bytes = len(tag.encode('utf-8'))
-    filename_len_in_bytes = len(filename.encode('utf-8'))
-    while filename_len_in_bytes + tag_len_in_bytes > 230:
-        filename = filename[:-1]
-        filename_len_in_bytes = len(filename.encode('utf-8'))
-
-    return filename

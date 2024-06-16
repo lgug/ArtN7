@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>CHECK THE INTEGRITY OF ALL THE CATALOG</h1>
+<p>This page allows you to check if all the movies in this catalog are not broken or corrupted.
+    To start the check press the button below.</p>
+
+<button type="button" onclick="startHashCheck({{ movies }})">START THE CHECK</button>
+</body>
+
+<script>
+    function startHashCheck(movies) {
+        for (let i = 0; i < movies.length; i++) {
+            let movie_id = movies[i];
+
+            let xhttp = new XMLHttpRequest();
+            xhttp.onload = function (r) {
+                console.log(r)
+            }
+            xhttp.open('GET', '/catalog/check_movie_hash/' + movie_id)
+            xhttp.send()
+        }
+    }
+</script>
+
+</html>

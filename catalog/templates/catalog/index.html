@@ -6,9 +6,11 @@
 </head>
 <body>
 
-<button>SEARCH</button>
+<button><a href="{% url "search" %}">SEARCH MOVIE</a></button>
 <button><a href="{% url "movie_upload" %}">UPLOAD NEW MOVIE</a></button>
-<button>CHECK INTEGRITY</button>
+<button><a href="{% url "check_catalog_integrity" %}">CHECK INTEGRITY</a></button>
+
+<button><a href="/admin">Access as admin</a></button>
 
 </body>
 </html>

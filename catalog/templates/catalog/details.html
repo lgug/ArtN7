@@ -14,19 +14,89 @@
     <p><b>Registi</b>: {{ directors }}</p>
     <p><b>Sceneggiatori</b>: {{ screenwriters }}</p>
     <p><b>Attori principali</b>: {{ actors }}</p>
-    <p><b>Valutazione</b>: {{ movie.rating_integer }}</p>
+    <p><b>Valutazione</b>:
+        <input type="hidden" id="rating" value="{{ movie.rating_integer }}">
+    <button type="button" name="star" onclick="updateRatingAndSave('1', this)">1</button>
+    <button type="button" name="star" onclick="updateRatingAndSave('2', this)">2</button>
+    <button type="button" name="star" onclick="updateRatingAndSave('3', this)">3</button>
+    <button type="button" name="star" onclick="updateRatingAndSave('4', this)">4</button>
+    <button type="button" name="star" onclick="updateRatingAndSave('5', this)">5</button>
+    <button type="button" name="star" onclick="updateRatingAndSave('6', this)">6</button>
+    <button type="button" name="star" onclick="updateRatingAndSave('7', this)">7</button>
+    <button type="button" name="star" onclick="updateRatingAndSave('8', this)">8</button>
+    <button type="button" name="star" onclick="updateRatingAndSave('9', this)">9</button>
+    <button type="button" name="star" onclick="updateRatingAndSave('10', this)">10</button>
+    </p>
+
     <p><b>IMDb ID</b>: {{ movie.imdb_id_text }}</p>
-    <img src="{{ movie.poster_text }}" id="poster" width="400" style="position: absolute" alt="Movie poster">
+    <img src="{{ movie.poster_text }}" id="poster" width="400" style="position: relative" alt="Movie poster">
 
     <h3>Film associati a questo titolo:</h3>
-    <ul>
+    <table>
         {% for x in videos %}
-        <li>{{ x.filename }} {{ x.size }} {{ x.tag }}</li>
+            <tr>
+                <td>{{ x.file.file_name_text }}</td>
+                <td>{{ x.file.tag_text }}</td>
+                <td>
+                    <button><a href="{% url 'download_file' movie.id x.file.file_name_text %}">Scarica</a></button>
+                    <button><a href="file://{{ x.path }}" target="_blank">Apri</a></button>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Altri file</h3>
+    <ul>
+        {% for x in other_files %}
+        <li>{{ x.file_name_text }} {{ x.tag_text }}</li>
+
         {% endfor %}
     </ul>
 
-    <h3>Altri file</h3>
+<script>
 
+    window.onload = function () {
+        var rating = document.getElementById('rating').value
+        document.getElementsByName('star').forEach(value => {
+            if (value.innerHTML === rating.toString()) {
+                updateRating(rating, value)
+            }
+        })
+    }
+
+    function updateRating(n, button) {
+        document.getElementById('rating').value = n;
+        document.getElementsByName('star').forEach(value => value.removeAttribute('disabled'));
+        button.setAttribute('disabled', true);
+    }
+
+    function updateRatingAndSave(n, button) {
+        updateRating(n, button);
+
+        var formData = new FormData();
+        formData.set("rating", n)
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open('POST', "/catalog/update_rating/" + {{ movie.id }})
+        xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+        xhttp.send(formData);
+    }
+
+    function getCookie(c_name) {
+        let c_start;
+        let c_end;
+        if (document.cookie.length > 0) {
+            c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start !== -1) {
+                c_start = c_start + c_name.length + 1;
+                c_end = document.cookie.indexOf(";", c_start);
+                if (c_end === -1) c_end = document.cookie.length;
+                return unescape(document.cookie.substring(c_start, c_end));
+            }
+        }
+        return "";
+    }
+</script>
 
 </body>
 </html>

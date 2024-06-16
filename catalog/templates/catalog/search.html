@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>Ricerca all'interno del catalogo</h1>
+
+<form action="{% url 'search_result' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <input type="text" name="query">
+    <br><br>
+
+    <input type="radio" id="radio_title" name="search_type" value="title">
+    <label for="radio_title">Search by title</label><br>
+    <input type="radio" id="radio_year" name="search_type" value="year">
+    <label for="radio_year">Search by year</label><br>
+    <input type="radio" id="radio_director" name="search_type" value="director">
+    <label for="radio_director">Search by director</label><br>
+    <input type="radio" id="radio_actor" name="search_type" value="actor">
+    <label for="radio_actor">Search by actor</label>
+    <br><br>
+
+    <input type="submit" value="SEARCH">
+</form>
+
+</body>
+</html>

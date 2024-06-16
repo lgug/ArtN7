@@ -275,7 +275,7 @@
                 cancelable: true
             });
             dropArea.dispatchEvent(dropEvent);
-            document.getElementById('file-input').dispatchEvent(new CustomEvent('change', {}));
+            {#document.getElementById('file-input').dispatchEvent(new CustomEvent('change', {}));#}
         }
         xhttp.open("GET", "/catalog/imdb_search/" + imdbId);
         xhttp.send();
@@ -382,23 +382,76 @@
     }
 
     document.getElementById('movie-input').addEventListener('change', function () {
-        const files = document.getElementById('movie-input').files;
-        var tag = document.getElementById('movie-input-tag').value;
-        var type = document.getElementById('movie-input-type').value;
+        const CHUNK_SIZE = 128 * 1024 * 1024; // 100 MB
 
-        const fileReader = new FileReader();
-        fileReader.onload = function (e) {
-            const xhttp = new XMLHttpRequest();
-            xhttp.onload = function () {
-                updateTable(files[0])
+        const files = document.getElementById('movie-input').files;
+        const tag = document.getElementById('movie-input-tag').value;
+        const type = document.getElementById('movie-input-type').value;
+
+        {#const fileReader = new FileReader();#}
+        {#fileReader.onload = function (e) {#}
+        {#    const xhttp = new XMLHttpRequest();#}
+        {#    xhttp.onload = function () {#}
+        {#        updateTable(files[0])#}
+        {#    }#}
+        {#    xhttp.open("POST", "/catalog/upload_temp_file/" + files[0].name);#}
+        {#    xhttp.setRequestHeader("Movie-Tag", tag);#}
+        {#    xhttp.setRequestHeader("Movie-Type", type);#}
+        {#    xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))#}
+        {#    xhttp.send(e.target.result);#}
+        {# }#}
+        {#fileReader.readAsArrayBuffer(files[0]);#}
+
+        const uploadFileChunk = (file, start, end) => {
+            return new Promise((resolve, reject) => {
+                const fileReader = new FileReader();
+                const chunk = file.slice(start, end);
+                fileReader.onload = function (e) {
+                    const xhttp = new XMLHttpRequest();
+                    xhttp.onload = function () {
+                        resolve();
+                    }
+                    xhttp.onerror = function () {
+                        reject(new Error('Errore durante il caricamento del blocco.'));
+                    }
+                    xhttp.open("POST", "/catalog/upload_temp_file_chunk/" + file.name);
+                    xhttp.setRequestHeader("Num-Chunk", (end / CHUNK_SIZE).toString())
+                    xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                    xhttp.send(e.target.result);
+                }
+                fileReader.readAsArrayBuffer(chunk);
+            });
+        };
+
+        const uploadFile = async (file) => {
+            let start = 0;
+            let end = Math.min(CHUNK_SIZE, file.size);
+            while (start < file.size) {
+                await uploadFileChunk(file, start, end);
+                start = end;
+                end = Math.min(start + CHUNK_SIZE, file.size);
             }
-            xhttp.open("POST", "/catalog/upload_temp_file/" + files[0].name);
+            // Informa il server che tutti i blocchi sono stati caricati
+            // e che può ricomporre il file.
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/catalog/upload_temp_file/" + file.name);
             xhttp.setRequestHeader("Movie-Tag", tag);
             xhttp.setRequestHeader("Movie-Type", type);
-            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
-            xhttp.send(e.target.result);
-        }
-        fileReader.readAsArrayBuffer(files[0]);
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            xhttp.send();
+        };
+
+        uploadFile(files[0])
+            .then(() => {
+                console.log("Caricamento completato.");
+                updateTable(files[0])
+
+                document.getElementById('movie-input').value = "";
+            })
+            .catch(error => {
+                console.error("Errore durante il caricamento:", error);
+            });
+
     });
 
     function updateTable(file) {

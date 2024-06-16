@@ -1,0 +1,35 @@
+{% extends "admin/base_site.html" %}
+{% load static i18n %}
+
+<!-- TODO si sono perse alcune cose dalla pagina di admin principale -->
+
+{% block content %}
+
+    <div class="dashboard-module">
+        <h1>Welcome to the Admin page of <b>ARTN7</b></h1>
+        <br>
+        <br>
+
+        <h2>How to Delete a Single File of a Catalog Title</h2>
+        <p>This action will delete the selected files from both the database and the filesystem.</p>
+        <ol>
+            <li>Navigate to the <strong>Files</strong> section.</li>
+            <li>Select the action <strong>"Delete this file from the catalog"</strong>.</li>
+            <li>Check the files you wish to delete.</li>
+            <li>Click on <strong>Go</strong>.</li>
+        </ol>
+        <br>
+
+        <h2>How to Delete an Entire Catalog Title</h2>
+        <p>This action will delete the selected title from the database along with all related records that have foreign
+            keys tied to that title. Additionally, all associated files will be deleted from the filesystem.</p>
+        <p style="color:red">Warning: This action is dangerous and should be performed with caution!</p>
+        <ol>
+            <li>Navigate to the <strong>Movies</strong> section.</li>
+            <li>Select the action <strong>"Delete movie and all its files"</strong>.</li>
+            <li>Check the title you wish to delete.</li>
+            <li>Click on <strong>Go</strong>.</li>
+        </ol>
+    </div>
+
+{% endblock %}

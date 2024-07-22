@@ -1,17 +1,29 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main-style.css' %}">
 </head>
 <body>
 
-<h1>CHECK THE INTEGRITY OF ALL THE CATALOG</h1>
-<p>This page allows you to check if all the movies in this catalog are not broken or corrupted.
-    To start the check press the button below.</p>
+{% include 'catalog/catalog_navbar.html' %}
 
-<button type="button" onclick="startHashCheck({{ movies }})">START THE CHECK</button>
-</body>
+<div class="catalog-page-container">
+    <div class="container border rounded align-content-center">
+        <h1 class="text-center">Integrity Check</h1>
+        <p class="text-center">This page allows you to check if all the movies in this catalog are not broken or
+            corrupted.
+            To start the check press the button below.</p>
+
+        <div class="row justify-content-center">
+            <button class="col-auto btn btn-primary " type="button" onclick="startHashCheck({{ movies }})">START THE CHECK</button>
+        </div>
+
+    </div>
+</div>
 
 <script>
     function startHashCheck(movies) {
@@ -27,5 +39,5 @@
         }
     }
 </script>
-
+</body>
 </html>

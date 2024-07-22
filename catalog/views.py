@@ -1,13 +1,18 @@
 import base64
+import random
 import os.path
 import shutil
 
+from django.db.models import Q
 from django.http import JsonResponse, FileResponse
 from django.shortcuts import render
 
 import catalog.catalog_managment
 from catalog.models import *
-from catalog.project_utils.filemanager import build_movie_folder_name
+from catalog.project_utils.filemanager import build_movie_folder_name, chunk_sorter
+
+
+SEPARATOR = " · "
 
 
 def index(request):
@@ -17,19 +22,19 @@ def index(request):
 def movie_details(request, movie_id):
     movie = Movie.objects.get(id=movie_id)
     countries = Country.objects.filter(movie=movie)
-    countries_str = " · ".join([str(x) for x in list(countries)])
+    countries_str = SEPARATOR.join([str(x) for x in list(countries)])
 
     genres = Genre.objects.filter(movie=movie)
-    genres_str = " · ".join([str(x) for x in list(genres)])
+    genres_str = SEPARATOR.join([str(x) for x in list(genres)])
 
     directors = Director.objects.filter(movie=movie)
-    directors_str = " · ".join([str(x) for x in list(directors)])
+    directors_str = SEPARATOR.join([str(x) for x in list(directors)])
 
     screenwriters = Screenwriter.objects.filter(movie=movie)
-    screenwriters_str = " · ".join([str(x) for x in list(screenwriters)])
+    screenwriters_str = SEPARATOR.join([str(x) for x in list(screenwriters)])
 
     actors = Actor.objects.filter(movie=movie)
-    actors_str = " · ".join([str(x) for x in list(actors)])
+    actors_str = SEPARATOR.join([str(x) for x in list(actors)])
 
     context = {"movie": movie,
                "countries": countries_str,
@@ -52,13 +57,18 @@ def get_all_movies(movie):
             _map.append({"path": os.path.abspath(f"data/{folder[0]}/{file.file_name_text}"), "file": file})
         return _map
     except File.DoesNotExist:
-        return _map
+        return []
 
 
 def get_all_other_files(movie):
+    _map = []
+
     try:
-        not_videos = File.objects.exclude(type_text="Video")
-        return not_videos.filter(movie=movie)
+        not_videos = File.objects.exclude(type_text="Video").filter(movie=movie)
+        for file in not_videos:
+            folder = [x for x in os.listdir('data') if x.startswith(str(file.movie.id))]
+            _map.append({"path": os.path.abspath(f"data/{folder[0]}/{file.file_name_text}"), "file": file})
+        return _map
     except File.DoesNotExist:
         return []
 
@@ -91,9 +101,10 @@ def upload_function(request):
 
     try:
         catalog.catalog_managment.save_movie_files(movie)
-    except Exception:
+    except Exception as e:
         movie.delete()
-        return render(request, 'catalog/upload_result.html')
+        context = {"movie_id": None, "success": False, "message": str(e)}
+        return render(request, 'catalog/upload_result.html', context)
 
     for director in directors:
         d = Director(name_text=director, movie=movie)
@@ -116,7 +127,8 @@ def upload_function(request):
         sg = Saga(name_text=saga, movie=movie)
         sg.save()
 
-    return render(request, 'catalog/upload_result.html')
+    context = {"movie_id": movie.id, "success": True, "message": "OK"}
+    return render(request, 'catalog/upload_result.html', context)
 
 
 def upload_temp_file_chunk(request, name):
@@ -137,7 +149,7 @@ def upload_temp_file(request, name):
     tag = request.headers['Movie-Tag']
 
     chunk_files = os.listdir(f"temp/D_{name}")
-    chunk_files.sort()
+    chunk_files.sort(key=chunk_sorter)
     for chunk in chunk_files:
         with open(f"temp/D_{name}/{chunk}", 'rb') as source:
             content = source.read()
@@ -172,25 +184,31 @@ def download_file(request, movie_id, name):
 
 
 def search(request):
-    return render(request, 'catalog/search.html')
+    return render(request, 'catalog/search.html', context={"results": {}})
 
 
-def search_result(request):
-    key = request.POST['search_type']
-    query = request.POST['query']
+def get_search_result(request):
+    title = request.POST['formMovieTitle']
+    year = request.POST['formMovieYear']
+    saga = request.POST['formMovieSaga']
+    director = request.POST['formMovieDirector']
+    actor = request.POST['formMovieActor']
 
-    results = []
-    if key == "title":
-        results = list(Movie.objects.filter(title_text__icontains=query.lower()))
-    elif key == "year":
-        results = list(Movie.objects.filter(year_integer__exact=int(query)))
-    elif key == "director":
-        results = list(Movie.objects.filter(director__name_text__icontains=query.lower()).distinct())
-    elif key == "actor":
-        results = list(Movie.objects.filter(actor__name_text__icontains=query.lower()).distinct())
+    result = Movie.objects.filter(
+        Q(title_text__icontains=title.lower()) |
+        Q(original_title_text__icontains=title.lower())
+    )
+    if year != '' and int(year) > 0:
+        result = result.filter(year_integer__exact=int(year))
+    if saga != '':
+        result = result.filter(saga__name_text__icontains=saga.lower())
+    if director != '':
+        result = result.filter(director__name_text__icontains=director.lower()).distinct()
+    if actor != '':
+        result = result.filter(actor__name_text__icontains=actor.lower()).distinct()
 
-    context = {'results': results}
-    return render(request, 'catalog/search_result.html', context)
+    context = {'results': result}
+    return render(request, 'catalog/search.html', context)
 
 
 def play_video(request, movie_id, name):
@@ -239,3 +257,18 @@ def check_movie_hash(request, movie_id):
 
     response['status'] = 'OK'
     return JsonResponse(response)
+
+
+def suggested(request):
+    id_rating_list = list(Movie.objects.values_list('id', 'rating_integer'))
+    ids = [i[0] for i in id_rating_list]
+
+    selected_movies = []
+    while len(selected_movies) < len(ids) and len(selected_movies) < 20:
+        random_id = random.choices(ids, weights=[i[1] for i in id_rating_list], k=1)
+
+        if len(random_id) > 0 and random_id[0] not in selected_movies:
+            selected_movies.append(random_id[0])
+
+    context = {'movies': list(Movie.objects.filter(id__in=selected_movies))}
+    return render(request, 'catalog/suggested.html', context)

@@ -6,6 +6,10 @@ TEMP_ROOT = 'temp'
 MOVIE_FOLDER_DELIMITER = '__'
 
 
+def chunk_sorter(e):
+    return int(e)
+
+
 def sanitize_filename(filename, tag, extra_char=" ()"):
     filename = (filename.replace('<', '')
                 .replace('>', '')

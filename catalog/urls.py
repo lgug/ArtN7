@@ -13,9 +13,10 @@ urlpatterns = [
     path("remove_temp_file/<str:name>", views.remove_temp_file, name="remove_temp_file"),
     path("download_file/<int:movie_id>/<str:name>", views.download_file, name="download_file"),
     path("search", views.search, name="search"),
-    path("search_result", views.search_result, name="search_result"),
+    path("search_result", views.get_search_result, name="get_search_result"),
     path("play_video/<int:movie_id>/<str:name>", views.play_video, name="play_video"),
     path("update_rating/<int:movie_id>", views.update_rating, name="update_rating"),
     path("check_catalog_integrity", views.check_catalog_integrity, name="check_catalog_integrity"),
     path("check_movie_hash/<int:movie_id>", views.check_movie_hash, name="check_movie_hash"),
+    path("suggested_movies", views.suggested, name="suggested"),
 ]

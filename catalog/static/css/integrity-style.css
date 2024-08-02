@@ -1,0 +1,11 @@
+.catalog-checking {
+    color: darkslategrey;
+}
+
+.catalog-valid {
+    color: darkgreen;
+}
+
+.catalog-error {
+    color: red;
+}

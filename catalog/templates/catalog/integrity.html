@@ -6,38 +6,189 @@
     <title>Title</title>
     <link rel="stylesheet" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'css/main-style.css' %}">
+    <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.js' %}"></script>
 </head>
 <body>
 
+<!-- modals -->
+<div class="modal fade" id="integrityModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 text-primary" id="integrityModalLabel">Integrity Check finished</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="integrityResultText" class="modal-body">
+                The integrity check of all the database has finished. Check the results in the page.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- body -->
 {% include 'catalog/catalog_navbar.html' %}
 
 <div class="catalog-page-container">
+    {% csrf_token %}
     <div class="container border rounded align-content-center">
         <h1 class="text-center">Integrity Check</h1>
         <p class="text-center">This page allows you to check if all the movies in this catalog are not broken or
             corrupted.
             To start the check press the button below.</p>
 
-        <div class="row justify-content-center">
-            <button class="col-auto btn btn-primary " type="button" onclick="startHashCheck({{ movies }})">START THE CHECK</button>
+        <div class="row justify-content-center my-2">
+            <button id="integrityCheckStart" class="col-auto btn btn-primary " type="button"
+                    onclick="startHashCheck({{ movies }})">
+                START THE CHECK
+            </button>
         </div>
+
+        <div class="progress my-3" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0"
+             aria-valuemax="100">
+            <div id="integrityProgressBar" class="progress-bar progress-bar-striped progress-bar-animated w-0"></div>
+        </div>
+
+        <div class="container-fluid accordion" id="integrityListItem">
+            <div class="accordion" id="accordionFlushExample">
+            </div>
+        </div>
+
 
     </div>
 </div>
 
 <script>
-    function startHashCheck(movies) {
-        for (let i = 0; i < movies.length; i++) {
-            let movie_id = movies[i];
 
-            let xhttp = new XMLHttpRequest();
-            xhttp.onload = function (r) {
-                console.log(r)
+    const VALID = '<span class="text-success"><strong>VALID</strong></span>';
+    const CORRUPTED = '<span class="text-danger"><strong>CORRUPTED</strong></span>';
+    const CHECKING = '<span class="text-dark-emphasis"><em>Checking...</em></span>';
+
+    async function startHashCheck(movies) {
+        await showAllMovies(movies);
+
+        document.getElementById("integrityCheckStart").disabled = true;
+
+        for (let i = 0; i < movies.length; i++) {
+            let movie_s = JSON.parse(movies[i]);
+
+            let response = await fetch('/catalog/check_movie_hash/' + movie_s['movie_id'], {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8',
+                    'X-CSRFToken': getCookie("csrftoken")
+                },
+                body: JSON.stringify(movie_s)
+            });
+
+            if (response.ok) {
+                let data = await response.json();
+                let result = true;
+                for (let i = 0; i < data.length; i++) {
+                    let file = data[i];
+                    let fileResultTag = document.getElementById(file['expected_hash']);
+
+                    fileResultTag.innerHTML = file['whole'] ? VALID : CORRUPTED;
+                    result = result && file['whole'];
+                }
+
+                let movieResultTag = document.getElementById("accordionMovieState" + data[0]['movie_id']);
+                movieResultTag.innerHTML = result ? VALID : CORRUPTED;
+            } else {
+                console.error("Error during the request: " + response.statusText);
             }
-            xhttp.open('GET', '/catalog/check_movie_hash/' + movie_id)
-            xhttp.send()
+
+            let progressBar = document.getElementById("integrityProgressBar");
+            if ((i + 1) / movies.length >= 0.99) {
+                progressBar.classList.add("w-100");
+            } else if ((i + 1) / movies.length >= 0.75) {
+                progressBar.classList.add("w-75");
+            } else if ((i + 1) / movies.length >= 0.50) {
+                progressBar.classList.add("w-50");
+            } else if ((i + 1) / movies.length >= 0.25) {
+                progressBar.classList.add("w-25");
+            } else {
+                progressBar.classList.add("w-0");
+            }
         }
+
+        document.getElementById("integrityCheckStart").disabled = false;
+        let modal = new bootstrap.Modal(document.getElementById('integrityModal'), {
+            keyboard: false
+        });
+        modal.show();
     }
+
+    async function loadAccordionRow() {
+        let response = await fetch("{% static 'html/integrity-accordion-row.html' %}");
+        return await response.text();
+    }
+
+    async function showAllMovies(movies) {
+        let accordionItems = document.getElementById("accordionFlushExample");
+        while (accordionItems.firstChild) {
+            accordionItems.removeChild(accordionItems.firstChild);
+        }
+
+        for (let i = 0; i < movies.length; i++) {
+            let movie = JSON.parse(movies[i]);
+
+            let accordion = await loadAccordionRow();
+            accordionItems.innerHTML += accordion;
+            let accordionTag = accordionItems.children[accordionItems.children.length - 1];
+
+            let accordionHeader = accordionTag.querySelector(".accordion-button");
+            let accordionBody = accordionTag.querySelector(".accordion-collapse")
+
+            let movieTitleTag = accordionTag.querySelector("#accordionMovieTitle");
+            let movieStateTag = accordionTag.querySelector("#accordionMovieState");
+            let movieFilesTag = accordionTag.querySelector("#accordionMovieFiles");
+
+            let targetName = "flush-collapse" + movie['movie_id'];
+            accordionHeader.setAttribute("data-bs-target", "#" + targetName);
+            accordionHeader.setAttribute("aria-controls", targetName);
+            accordionBody.id = targetName;
+
+            movieTitleTag.id = "accordionMovieTitle" + movie['movie_id'];
+            movieStateTag.id = "accordionMovieState" + movie['movie_id'];
+            movieFilesTag.id = "accordionMovieFiles" + movie['movie_id'];
+
+            movieTitleTag.innerHTML = movie['title'];
+            movieStateTag.innerHTML = CHECKING;
+
+            for (let j = 0; j < movie['files'].length; j++) {
+                let file = movie['files'][j];
+
+                let fileRow = '<div class="row my-3">' +
+                    '<div class="col">' + file['file_name'] + '</div>' +
+                    '<div class="col-auto" id="' + file['file_hash'] + '">' + CHECKING + '</div>' +
+                    '</div>';
+
+                movieFilesTag.innerHTML += fileRow;
+            }
+        }
+
+    }
+
+    // TODO duplicated. To Refactor in one
+    function getCookie(c_name) {
+        let c_start;
+        let c_end;
+        if (document.cookie.length > 0) {
+            c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start !== -1) {
+                c_start = c_start + c_name.length + 1;
+                c_end = document.cookie.indexOf(";", c_start);
+                if (c_end === -1) c_end = document.cookie.length;
+                return unescape(document.cookie.substring(c_start, c_end));
+            }
+        }
+        return "";
+    }
+
 </script>
 </body>
 </html>

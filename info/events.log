@@ -1,0 +1,124 @@
+INFO - from 127.0.0.1 at 2024-07-28 08:42:20.467377: Open Index page 
+INFO - from 127.0.0.1 at 2024-07-28 12:53:09.202101: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 13:03:22.889501: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 13:03:24.279145: INTEGRITY_CHECK - Open catalog integrity check.
+INFO - from 127.0.0.1 at 2024-07-28 13:04:38.178666: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 13:13:34.934623: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 13:13:37.761770: ADMIN - Request to download the log file.
+INFO - from 127.0.0.1 at 2024-07-28 13:34:04.578621: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 13:42:37.267403: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 13:46:15.317010: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 21:16:50.542463: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 21:16:52.679099: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-07-28 21:16:53.694399: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-07-28 21:16:57.149645: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:17:32.439494: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:19:38.592140: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:19:52.811592: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:20:27.600377: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:20:49.542995: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 21:20:50.744326: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-07-28 21:20:51.575653: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-07-28 21:20:53.641090: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:22:11.866299: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:23:09.339065: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:23:37.514930: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:23:38.395683: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:23:43.762541: DOWNLOAD - Request downloading of all files for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:27:03.250666: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 21:27:05.732062: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-07-28 21:27:06.648322: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-07-28 21:27:08.859291: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:27:12.810800: DETAILS - Open details for movie with id 20.
+INFO - from 127.0.0.1 at 2024-07-28 21:27:18.570057: DOWNLOAD - Request downloading of all files for movie with id 20.
+INFO - from 127.0.0.1 at 2024-07-28 21:33:51.364531: ADMIN - Request to delete titles from the catalog.
+INFO - from 127.0.0.1 at 2024-07-28 21:35:16.298270: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 21:35:17.481821: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-07-28 21:35:18.651389: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-07-28 21:35:21.333259: DETAILS - Open details for movie with id 11.
+INFO - from 127.0.0.1 at 2024-07-28 21:36:00.954307: ADMIN - Request to delete titles from the catalog.
+INFO - from 127.0.0.1 at 2024-07-28 21:36:01.339844: ADMIN - The movie with id None and title 'Grindhouse - A prova di morte' has been deleted.
+INFO - from 127.0.0.1 at 2024-07-28 21:36:01.606768: ADMIN - The movie with id None and title 'Iron Man 3' has been deleted.
+INFO - from 127.0.0.1 at 2024-07-28 21:36:01.831762: ADMIN - The movie with id None and title 'Gummo' has been deleted.
+INFO - from 127.0.0.1 at 2024-07-28 21:36:14.279947: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 21:36:15.489913: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-07-28 21:36:16.278291: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-07-28 21:36:19.333337: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:36:29.259700: DOWNLOAD - Request downloading of all files for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:57:29.181878: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:57:47.428255: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:57:52.341511: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:58:44.897812: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:59:10.445869: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:59:13.556746: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 21:59:14.132460: DETAILS - Open details for movie with id 17.
+INFO - from 127.0.0.1 at 2024-07-28 22:00:12.736372: SUGGESTED - Open Suggested movies page.
+INFO - from 127.0.0.1 at 2024-07-28 22:00:24.992310: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-28 22:00:27.084954: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 18:42:57.074584: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 18:43:02.688862: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 18:44:26.208322: UPLOAD - Searching information from IMDb for id tt0087803.
+INFO - from 127.0.0.1 at 2024-07-29 18:50:45.685154: UPLOAD - Uploading of new file with name 1984.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 18:52:10.118810: UPLOAD - Uploading of new file with name 1984.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 18:53:03.191815: UPLOAD - Removing temp file with name 1984.mkv from the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 18:53:04.386832: UPLOAD - Removing temp file with name 1984.mkv from the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 18:53:16.579864: UPLOAD - Start to save a new movie
+ERR  - from 127.0.0.1 at 2024-07-29 18:54:04.526301: UPLOAD - Error trying to save a new movie: 'archive.zip'
+INFO - from 127.0.0.1 at 2024-07-29 18:54:14.460297: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 18:54:17.351054: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-07-29 18:54:18.455049: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-07-29 19:14:15.458677: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 19:14:17.026127: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 19:14:29.157446: UPLOAD - Searching information from IMDb for id tt0087803.
+INFO - from 127.0.0.1 at 2024-07-29 19:15:43.703249: UPLOAD - Uploading of new file with name 1984.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 19:15:50.442467: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 19:16:26.318093: UPLOAD - Removing temp file with name 1984.mkv from the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 19:18:34.224708: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 19:19:15.874072: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 19:19:40.289991: UPLOAD - Searching information from IMDb for id tt0087803.
+INFO - from 127.0.0.1 at 2024-07-29 19:20:56.374757: UPLOAD - Uploading of new file with name 1984.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 20:22:50.934716: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 20:23:13.734089: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 20:24:04.037417: UPLOAD - Searching information from IMDb for id tt0087803.
+INFO - from 127.0.0.1 at 2024-07-29 20:25:45.218915: UPLOAD - Uploading of new file with name 1984.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 20:30:08.486936: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 20:30:20.366187: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 20:30:26.194504: UPLOAD - Searching information from IMDb for id tt0087803.
+INFO - from 127.0.0.1 at 2024-07-29 20:31:35.679919: UPLOAD - Uploading of new file with name 1984.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 20:33:29.734045: UPLOAD - Start to save a new movie
+INFO - from 127.0.0.1 at 2024-07-29 20:35:42.522509: UPLOAD - 25
+INFO - from 127.0.0.1 at 2024-07-29 20:36:32.422048: DETAILS - Open details for movie with id 25.
+INFO - from 127.0.0.1 at 2024-07-29 20:40:32.098181: ADMIN - Request to delete titles from the catalog.
+INFO - from 127.0.0.1 at 2024-07-29 20:40:32.520968: ADMIN - The movie with id None and title 'Orwell 1984' has been deleted.
+INFO - from 127.0.0.1 at 2024-07-29 20:40:38.589142: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 20:40:40.088111: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-07-29 20:40:40.807500: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-07-29 20:41:05.444227: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 20:41:05.683448: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 20:42:33.601529: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 20:44:03.887947: UPLOAD - Uploading of new file with name 1984.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 20:52:21.110434: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 20:52:29.088691: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 20:53:22.090057: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 20:53:25.752628: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 20:53:41.138786: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 20:54:36.375749: UPLOAD - Uploading of new file with name 1984.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 21:03:07.300015: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 21:03:08.847879: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 21:03:13.289874: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 21:04:04.994109: UPLOAD - Uploading of new file with name 1984.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 21:23:45.059757: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 21:23:48.074669: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 21:24:44.634534: UPLOAD - Uploading of new file with name 1984.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 21:27:48.647039: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 21:32:57.151266: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-07-29 21:33:01.967134: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-07-29 21:33:52.758391: UPLOAD - Uploading of new file with name 1984.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 21:36:11.159949: UPLOAD - Uploading of new file with name 2022 - I sopravvissuti.mkv in the temp folder.
+INFO - from 127.0.0.1 at 2024-07-29 21:37:46.043532: UPLOAD - Searching information from IMDb for id tt0087803.
+INFO - from 127.0.0.1 at 2024-07-29 21:38:10.473859: UPLOAD - Start to save a new movie
+INFO - from 127.0.0.1 at 2024-07-29 21:39:07.645529: UPLOAD - 26
+INFO - from 127.0.0.1 at 2024-07-29 21:39:34.399157: DETAILS - Open details for movie with id 26.
+INFO - from 127.0.0.1 at 2024-07-29 21:40:03.436356: INTEGRITY_CHECK - Started integrity check of file with hash 0A00ADBBD35A913D1B2F851C2D43EF04F0E39697C8E0B8356DE5C6D8234D84BF
+INFO - from 127.0.0.1 at 2024-07-29 21:40:21.229925: INTEGRITY_CHECK - Started integrity check of file with hash CCA5E5BF42C05BE6D9DCDBF587A078BCAE6BB1E1BFEB19F88A3EEFF39A934E4D
+INFO - from 127.0.0.1 at 2024-07-29 21:40:40.873166: SUGGESTED - Open Suggested movies page.

@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ArtN7 - Search</title>
+    <link rel="stylesheet" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main-style.css' %}">
+</head>
+<body>
+
+{% include 'catalog/catalog_navbar.html' %}
+
+<div class="catalog-page-container">
+    <h1 class="text-center">Suggested movies</h1>
+    <div class="border-bottom my-3"></div>
+    <div class="container-fluid d-flex justify-content-center">
+        <div class="container m-3">
+            <div class="row g-2 justify-content-center">
+                {% for movie in movies %}
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-3">
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{ movie.poster_text }}" class="card-img-top" alt="Movie poster">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ movie.title_text }}</h5>
+                                <p class="card-text">{{ movie.original_title_text }} ({{ movie.year_integer }})</p>
+                                <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary">Open this title</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

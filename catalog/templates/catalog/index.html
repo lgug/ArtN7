@@ -1,16 +1,38 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>ArtN7 - Homepage</title>
+    <link rel="stylesheet" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main-style.css' %}">
 </head>
 <body>
 
-<button><a href="{% url "search" %}">SEARCH MOVIE</a></button>
-<button><a href="{% url "movie_upload" %}">UPLOAD NEW MOVIE</a></button>
-<button><a href="{% url "check_catalog_integrity" %}">CHECK INTEGRITY</a></button>
+{% include 'catalog/catalog_navbar.html' %}
+<div class="catalog-page-container">
+    <div class="container text-center">
+        <div class="row p-5">
+            <div class="col">
+                <h1>Welcome to ArtN7!</h1>
+                <span>The big database of movies. You can search, download a lot of free movies. You can also upload a new one.</span>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-4">
+                <a class="btn btn-primary btn-lg p-4" href="{% url "search" %}">SEARCH MOVIE</a>
+            </div>
+            <div class="col-4">
+                <a class="btn btn-primary btn-lg p-4" href="{% url "movie_upload" %}">UPLOAD NEW MOVIE</a>
+            </div>
+            <div class="col-4">
+                <a class="btn btn-primary btn-lg p-4" href="{% url "check_catalog_integrity" %}">CHECK INTEGRITY</a>
+            </div>
+        </div>
+    </div>
+</div>
 
-<button><a href="/admin">Access as admin</a></button>
 
+<script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.js' %}"></script>
 </body>
 </html>

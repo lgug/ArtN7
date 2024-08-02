@@ -1,48 +1,64 @@
 import base64
+import json
+import random
 import os.path
 import shutil
 
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import Q
 from django.http import JsonResponse, FileResponse
 from django.shortcuts import render
 
 import catalog.catalog_managment
-from catalog.models import *
-from catalog.project_utils.filemanager import build_movie_folder_name
+from catalog.models import Movie, Country, Genre, Saga, Director, Screenwriter, Actor, File
+from catalog.project_utils import integrity_management, logmanager, filemanager
+from catalog.project_utils.filemanager import build_movie_folder_name, chunk_sorter
+from catalog.project_utils.integrity_management import MovieSynthesis
+
+SEPARATOR = " · "
 
 
 def index(request):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.INDEX, "Opened the index page")
     return render(request, 'catalog/index.html')
 
 
 def movie_details(request, movie_id):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.DETAILS,
+                         f"Open details for movie with id {movie_id}.")
+
     movie = Movie.objects.get(id=movie_id)
     countries = Country.objects.filter(movie=movie)
-    countries_str = " · ".join([str(x) for x in list(countries)])
+    countries_str = SEPARATOR.join([str(x) for x in list(countries)])
 
     genres = Genre.objects.filter(movie=movie)
-    genres_str = " · ".join([str(x) for x in list(genres)])
+    genres_str = SEPARATOR.join([str(x) for x in list(genres)])
+
+    saga = Saga.objects.filter(movie=movie)
+    saga_str = saga[0].name_text if len(saga) > 0 else ""
 
     directors = Director.objects.filter(movie=movie)
-    directors_str = " · ".join([str(x) for x in list(directors)])
+    directors_str = SEPARATOR.join([str(x) for x in list(directors)])
 
     screenwriters = Screenwriter.objects.filter(movie=movie)
-    screenwriters_str = " · ".join([str(x) for x in list(screenwriters)])
+    screenwriters_str = SEPARATOR.join([str(x) for x in list(screenwriters)])
 
     actors = Actor.objects.filter(movie=movie)
-    actors_str = " · ".join([str(x) for x in list(actors)])
+    actors_str = SEPARATOR.join([str(x) for x in list(actors)])
 
     context = {"movie": movie,
                "countries": countries_str,
                "genres": genres_str,
+               "saga": saga_str,
                "directors": directors_str,
                "screenwriters": screenwriters_str,
                "actors": actors_str,
-               "videos": get_all_movies(movie),
+               "videos": get_all_videos(movie),
                "other_files": get_all_other_files(movie)}
     return render(request, "catalog/details.html", context)
 
 
-def get_all_movies(movie):
+def get_all_videos(movie):
     _map = []
 
     try:
@@ -52,22 +68,31 @@ def get_all_movies(movie):
             _map.append({"path": os.path.abspath(f"data/{folder[0]}/{file.file_name_text}"), "file": file})
         return _map
     except File.DoesNotExist:
-        return _map
+        return []
 
 
 def get_all_other_files(movie):
+    _map = []
+
     try:
-        not_videos = File.objects.exclude(type_text="Video")
-        return not_videos.filter(movie=movie)
+        not_videos = File.objects.exclude(type_text="Video").filter(movie=movie)
+        for file in not_videos:
+            folder = [x for x in os.listdir('data') if x.startswith(str(file.movie.id))]
+            _map.append({"path": os.path.abspath(f"data/{folder[0]}/{file.file_name_text}"), "file": file})
+        return _map
     except File.DoesNotExist:
         return []
 
 
 def movie_upload(request):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.UPLOAD, "Open the Upload page")
+
     return render(request, "catalog/upload.html")
 
 
 def upload_function(request):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.UPLOAD, "Start to save a new movie")
+
     title = request.POST["title"]
     original_title = request.POST["original_title"] if request.POST["original_title"] != '' else None
     year = int(request.POST["year"])
@@ -91,9 +116,13 @@ def upload_function(request):
 
     try:
         catalog.catalog_managment.save_movie_files(movie)
-    except Exception:
+    except Exception as e:
+        logmanager.new_event(request, logmanager.LogLevel.ERROR, logmanager.Function.UPLOAD,
+                             f"Error trying to save a new movie: {str(e)}")
+
         movie.delete()
-        return render(request, 'catalog/upload_result.html')
+        context = {"movie_id": None, "success": False, "message": str(e)}
+        return render(request, 'catalog/upload_result.html', context)
 
     for director in directors:
         d = Director(name_text=director, movie=movie)
@@ -116,7 +145,9 @@ def upload_function(request):
         sg = Saga(name_text=saga, movie=movie)
         sg.save()
 
-    return render(request, 'catalog/upload_result.html')
+    context = {"movie_id": movie.id, "success": True, "message": "OK"}
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.UPLOAD, str(movie.id))
+    return render(request, 'catalog/upload_result.html', context)
 
 
 def upload_temp_file_chunk(request, name):
@@ -133,11 +164,13 @@ def upload_temp_file_chunk(request, name):
 
 
 def upload_temp_file(request, name):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.UPLOAD,
+                         f"Uploading of new file with name {name} in the temp folder.")
     type_file = request.headers['Movie-Type']
     tag = request.headers['Movie-Tag']
 
     chunk_files = os.listdir(f"temp/D_{name}")
-    chunk_files.sort()
+    chunk_files.sort(key=chunk_sorter)
     for chunk in chunk_files:
         with open(f"temp/D_{name}/{chunk}", 'rb') as source:
             content = source.read()
@@ -154,16 +187,24 @@ def upload_temp_file(request, name):
 
 
 def remove_temp_file(request, name):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.UPLOAD,
+                         f"Removing temp file with name {name} from the temp folder.")
     if os.path.exists(f"temp/{name}"):
         os.remove(f"temp/{name}")
     return JsonResponse({'status': 'ok'})
 
 
 def imdb_search(request, imdb_id):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.UPLOAD,
+                         f"Searching information from IMDb for id {imdb_id}.")
+
     return JsonResponse(catalog.catalog_managment.retrieve_info_from_imdb(imdb_id))
 
 
 def download_file(request, movie_id, name):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.DOWNLOAD,
+                         f"Start downloading of file with name {name} (movie id: {movie_id}).")
+
     folder = [x for x in os.listdir('data') if x.startswith(str(movie_id))]
     if len(folder) > 0:
         return FileResponse(open(f"data/{folder[0]}/{name}", 'rb'), as_attachment=True)
@@ -171,29 +212,78 @@ def download_file(request, movie_id, name):
         return None
 
 
+@staff_member_required
+def download_log_file(request):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.ADMIN,
+                         "Request to download the log file.")
+
+    if os.path.exists(f"{logmanager.LOG_FOLDER}/{logmanager.LOG_FILE}"):
+        return FileResponse(open(f"{logmanager.LOG_FOLDER}/{logmanager.LOG_FILE}", 'rb'), as_attachment=True)
+    else:
+        return None
+
+
+@staff_member_required
+def download_catalog_report(request):
+    report = {"movies": [], "info": []}
+
+    movies = Movie.objects.all()
+    for movie in movies:
+        report["movies"].append({
+            "id": movie.id,
+            "title": movie.title_text,
+            "original_title": movie.original_title_text,
+            "year": movie.year_integer,
+            "imdb_id": movie.imdb_id_text,
+            "files": [{
+                "file_name": x.file_name_text,
+                "file_hash": x.hash_text
+            } for x in File.objects.filter(movie_id__exact=movie.id)]
+        })
+
+    if not os.path.exists("temp"):
+        os.makedirs("temp")
+    with open("temp/report.json", 'w') as outfile:
+        outfile.write(json.dumps(report))
+
+    return FileResponse(open("temp/report.json", 'rb'), as_attachment=True)
+
+
 def search(request):
-    return render(request, 'catalog/search.html')
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.SEARCH,
+                         "Open Search page.")
+
+    return render(request, 'catalog/search.html', context={"results": {}})
 
 
-def search_result(request):
-    key = request.POST['search_type']
-    query = request.POST['query']
+def get_search_result(request):
+    title = request.POST['formMovieTitle']
+    year = request.POST['formMovieYear']
+    saga = request.POST['formMovieSaga']
+    director = request.POST['formMovieDirector']
+    actor = request.POST['formMovieActor']
 
-    results = []
-    if key == "title":
-        results = list(Movie.objects.filter(title_text__icontains=query.lower()))
-    elif key == "year":
-        results = list(Movie.objects.filter(year_integer__exact=int(query)))
-    elif key == "director":
-        results = list(Movie.objects.filter(director__name_text__icontains=query.lower()).distinct())
-    elif key == "actor":
-        results = list(Movie.objects.filter(actor__name_text__icontains=query.lower()).distinct())
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.SEARCH,
+                         f"Start searching movies with title='{title}', year='{year}', saga='{saga}', director='{director}', actor='{actor}'")
 
-    context = {'results': results}
-    return render(request, 'catalog/search_result.html', context)
+    result = Movie.objects.filter(
+        Q(title_text__icontains=title.lower()) |
+        Q(original_title_text__icontains=title.lower())
+    )
+    if year != '' and int(year) > 0:
+        result = result.filter(year_integer__exact=int(year))
+    if saga != '':
+        result = result.filter(saga__name_text__icontains=saga.lower())
+    if director != '':
+        result = result.filter(director__name_text__icontains=director.lower()).distinct()
+    if actor != '':
+        result = result.filter(actor__name_text__icontains=actor.lower()).distinct()
+
+    context = {'results': result}
+    return render(request, 'catalog/search.html', context)
 
 
-def play_video(request, movie_id, name):
+def play_video(request, movie_id, name):  # TODO serve?
     folder = [x for x in os.listdir('data') if x.startswith(str(movie_id))]
     extension = name[name.rfind(".") + 1:]
 
@@ -205,6 +295,9 @@ def play_video(request, movie_id, name):
 
 
 def update_rating(request, movie_id):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.UPLOAD,
+                         f"Update rating of movie with id {movie_id}.")
+
     new_rating = int(request.POST['rating'])
     movie = Movie.objects.get(pk=movie_id)
     movie.rating_integer = new_rating
@@ -214,28 +307,63 @@ def update_rating(request, movie_id):
 
 
 def check_catalog_integrity(request):
-    movies = Movie.objects.all()
-    context = {'movies': [m.id for m in movies]}
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.INTEGRITY_CHECK,
+                         "Open catalog integrity check.")
+
+    movies = integrity_management.get_all_movie_synthesis()
+    context = {'movies': [m.to_json() for m in movies]}
 
     return render(request, 'catalog/integrity.html', context=context)
 
 
 def check_movie_hash(request, movie_id):
-    movie = Movie.objects.get(pk=movie_id)
-    files = movie.file_set().all()
-    response = {'files': []}
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.INTEGRITY_CHECK,
+                         f"Started integrity check of movie with id {movie_id}")
 
-    for file in files:
-        original_hash = file.hash_text
+    movie_s = MovieSynthesis.from_json(request.body.decode('utf-8'))
+    response = integrity_management.check_movie(movie_s)
 
-        file_path = build_movie_folder_name(movie, file.file_name_text)
-        actual_hash = catalog.catalog_managment.sha256sum(file_path)
+    return JsonResponse([x.to_dict() for x in response], safe=False)
 
-        response['files'].append(
-            {'filename': file.file_name_text,
-             'original_hash': original_hash,
-             'actual_hash': actual_hash}
-        )
 
-    response['status'] = 'OK'
-    return JsonResponse(response)
+def check_file_hash(request):
+    file_info = json.loads(request.body.decode('utf-8'))
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.INTEGRITY_CHECK,
+                         f"Started integrity check of file with hash {file_info['hash']}")
+
+    file = File.objects.filter(hash_text__iexact=file_info['hash'])[0]
+
+    integrity_result = integrity_management.FileIntegrityCheckResult(file_info['movie_id'],
+                                                                     file.file_name_text,
+                                                                     file.hash_text)
+    integrity_result.check_file()
+
+    return JsonResponse(integrity_result.to_dict())
+
+
+def suggested(request):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.SUGGESTED,
+                         "Open Suggested movies page.")
+
+    id_rating_list = list(Movie.objects.values_list('id', 'rating_integer'))
+    ids = [i[0] for i in id_rating_list]
+
+    selected_movies = []
+    while len(selected_movies) < len(ids) and len(selected_movies) < 20:
+        random_id = random.choices(ids, weights=[i[1] for i in id_rating_list], k=1)
+
+        if len(random_id) > 0 and random_id[0] not in selected_movies:
+            selected_movies.append(random_id[0])
+
+    context = {'movies': list(Movie.objects.filter(id__in=selected_movies))}
+    return render(request, 'catalog/suggested.html', context)
+
+
+def download_all_movie_files(request, movie_id):
+    logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.DOWNLOAD,
+                         f"Request downloading of all files for movie with id {movie_id}.")
+
+    folder = filemanager.build_movie_folder_name(Movie.objects.get(pk=movie_id))
+    shutil.make_archive("temp/archive", 'zip', folder)
+
+    return FileResponse(open('temp/archive.zip', 'rb'), as_attachment=True)

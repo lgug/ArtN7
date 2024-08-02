@@ -1,0 +1,14 @@
+.catalog-page-container {
+    margin-top: 56px;
+}
+
+.catalog-fixed-size-img {
+    width: 100px;
+    height: 400px;
+}
+
+.catalog-star-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}

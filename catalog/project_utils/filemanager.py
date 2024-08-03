@@ -1,3 +1,4 @@
+import os
 import shutil
 
 DATA_ROOT = 'data'
@@ -46,3 +47,12 @@ def build_movie_folder_name(movie_model, filename=''):
     movie_name = sanitize_filename(movie_model.title_text, str(movie_id), extra_char=MOVIE_FOLDER_DELIMITER)
 
     return f'{DATA_ROOT}/{movie_id}{MOVIE_FOLDER_DELIMITER}{movie_name}/{filename}'
+
+
+def check_temp_folder():
+    if not os.path.exists(TEMP_ROOT):
+        os.makedirs(TEMP_ROOT)
+
+
+def clear_temp_folder():
+    shutil.rmtree(TEMP_ROOT)

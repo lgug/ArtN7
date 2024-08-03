@@ -11,7 +11,7 @@ from django.shortcuts import render
 
 import catalog.catalog_managment
 from catalog.models import Movie, Country, Genre, Saga, Director, Screenwriter, Actor, File
-from catalog.project_utils import integrity_management, logmanager, filemanager
+from catalog.project_utils import integrity_management, logmanager, filemanager, data_validation
 from catalog.project_utils.filemanager import build_movie_folder_name, chunk_sorter
 from catalog.project_utils.integrity_management import MovieSynthesis
 
@@ -93,6 +93,12 @@ def movie_upload(request):
 def upload_function(request):
     logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.UPLOAD, "Start to save a new movie")
 
+    check, message = data_validation.validate_input_data(request.POST)
+    if not check:
+        logmanager.new_event(request, logmanager.LogLevel.ERROR, logmanager.Function.UPLOAD, "Upload check has not passed")
+        context = {"movie_id": None, "success": check, "message": message}
+        return render(request, 'catalog/upload_result.html', context)
+
     title = request.POST["title"]
     original_title = request.POST["original_title"] if request.POST["original_title"] != '' else None
     year = int(request.POST["year"])
@@ -118,10 +124,10 @@ def upload_function(request):
         catalog.catalog_managment.save_movie_files(movie)
     except Exception as e:
         logmanager.new_event(request, logmanager.LogLevel.ERROR, logmanager.Function.UPLOAD,
-                             f"Error trying to save a new movie: {str(e)}")
+                             f"Error trying to save a new movie: {e}")
 
         movie.delete()
-        context = {"movie_id": None, "success": False, "message": str(e)}
+        context = {"movie_id": None, "success": False, "message": str(e.__cause__)}
         return render(request, 'catalog/upload_result.html', context)
 
     for director in directors:

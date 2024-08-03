@@ -72,7 +72,7 @@ def save_movie_files(movie):
         os.mkdir(movie_root_path)
 
     for temp_file in temp_files:
-        if temp_file == "meta.csv":
+        if temp_file not in metadata.keys():
             continue
 
         extension = temp_file[temp_file.rfind("."):]

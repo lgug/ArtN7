@@ -14,7 +14,6 @@ urlpatterns = [
     path("download_file/<int:movie_id>/<str:name>", views.download_file, name="download_file"),
     path("search", views.search, name="search"),
     path("search_result", views.get_search_result, name="get_search_result"),
-    path("play_video/<int:movie_id>/<str:name>", views.play_video, name="play_video"),
     path("update_rating/<int:movie_id>", views.update_rating, name="update_rating"),
     path("check_catalog_integrity", views.check_catalog_integrity, name="check_catalog_integrity"),
     path("check_movie_hash/<int:movie_id>", views.check_movie_hash, name="check_movie_hash"),
@@ -23,4 +22,5 @@ urlpatterns = [
     path("download_log_file", views.download_log_file, name="download_log_file"),
     path("download_catalog_report", views.download_catalog_report, name="download_catalog_report"),
     path("downloal_all_movie_files/<int:movie_id>", views.download_all_movie_files, name="download_all_movie_files"),
+    path("file_info/<int:file_id>", views.file_info, name="file_info"),
 ]

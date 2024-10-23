@@ -20,10 +20,10 @@
                 {% for movie in movies %}
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-3">
                         <div class="card" style="width: 18rem;">
-                            <img src="{{ movie.poster_text }}" class="card-img-top" alt="Movie poster">
+                            <img src="{{ movie.poster }}" class="card-img-top" alt="Movie poster">
                             <div class="card-body">
-                                <h5 class="card-title">{{ movie.title_text }}</h5>
-                                <p class="card-text">{{ movie.original_title_text }} ({{ movie.year_integer }})</p>
+                                <h5 class="card-title">{{ movie.local_title }}</h5>
+                                <p class="card-text">{{ movie.original_title }} ({{ movie.production_year }})</p>
                                 <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary">Open this title</a>
                             </div>
                         </div>

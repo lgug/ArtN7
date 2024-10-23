@@ -1,8 +1,12 @@
 import os
 import shutil
+from distutils.command.check import check
 
 DATA_ROOT = 'data'
 TEMP_ROOT = 'temp'
+TEMP_META_FILE = 'meta.csv'
+TEMP_ZIP_FILE = 'archive.zip'
+REPORT_FILE = 'report.json'
 
 MOVIE_FOLDER_DELIMITER = '__'
 
@@ -44,7 +48,7 @@ def delete_single_file(path):
 
 def build_movie_folder_name(movie_model, filename=''):
     movie_id = movie_model.id
-    movie_name = sanitize_filename(movie_model.title_text, str(movie_id), extra_char=MOVIE_FOLDER_DELIMITER)
+    movie_name = sanitize_filename(movie_model.local_title, str(movie_id), extra_char=MOVIE_FOLDER_DELIMITER)
 
     return f'{DATA_ROOT}/{movie_id}{MOVIE_FOLDER_DELIMITER}{movie_name}/{filename}'
 
@@ -56,3 +60,17 @@ def check_temp_folder():
 
 def clear_temp_folder():
     shutil.rmtree(TEMP_ROOT)
+
+
+def check_data_folder():
+    if not os.path.exists(DATA_ROOT):
+        os.makedirs(DATA_ROOT)
+
+
+def check_temp_movie_folder(movie_name):
+    check_temp_folder()
+    path = f"{TEMP_ROOT}/D_{movie_name}"
+    if not os.path.exists(path):
+        os.makedirs(path, exist_ok=True)
+
+    return path

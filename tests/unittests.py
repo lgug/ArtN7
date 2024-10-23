@@ -7,7 +7,7 @@ from catalog.models import Movie
 class MovieTestCase(TestCase):
 
     def setUp(self):
-        Movie.objects.create(title_text="The Great Dictator",
-                             original_title_text="The Great Dictator",
-                             year_integer=1940,
+        Movie.objects.create(local_title="The Great Dictator",
+                             original_title="The Great Dictator",
+                             production_year=1940,
                              )

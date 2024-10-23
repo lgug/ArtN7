@@ -17,7 +17,7 @@ def delete_movie_and_files(modeladmin, request, queryset):
         movie.delete()
 
         logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.ADMIN,
-                             f"The movie with id {movie.id} and title '{movie.title_text}' has been deleted.")
+                             f"The movie with id {movie.id} and title '{movie.local_title}' has been deleted.")
 
 
 @admin.action(description="Delete this file from the catalog")
@@ -26,12 +26,12 @@ def delete_movie_file(modeladmin, request, queryset):
                          "Request to delete files from the catalog.")
 
     for file in queryset:
-        path = build_movie_folder_name(file.movie, file.file_name_text)
+        path = build_movie_folder_name(file.movie, file.filename)
         delete_single_file(path)
         file.delete()
 
         logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.ADMIN,
-                             f"The file with name '{file.file_name_text}' for movie with id {file.movie.id} has been deleted.")
+                             f"The file with name '{file.filename}' for movie with id {file.movie.id} has been deleted.")
 
 
 class MovieAdmin(admin.ModelAdmin):

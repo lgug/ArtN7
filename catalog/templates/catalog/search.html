@@ -84,9 +84,9 @@
                 {% for movie in results %}
                     <tr>
                         <td class="align-middle">{{ movie.id }}</td>
-                        <td class="align-middle"><b>{{ movie.title_text }}</b></td>
-                        <td class="align-middle">{{ movie.original_title_text }}</td>
-                        <td class="align-middle">{{ movie.year_integer }}</td>
+                        <td class="align-middle"><b>{{ movie.local_title }}</b></td>
+                        <td class="align-middle">{{ movie.original_title }}</td>
+                        <td class="align-middle">{{ movie.production_year }}</td>
                         <td class="align-middle">
                             <a class="btn btn-primary" href="{% url 'movie_detail' movie.id %}">Open</a>
                         </td>
@@ -102,10 +102,10 @@
                     {% for movie in results %}
                         <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
                             <div class="card" style="width: 18rem;">
-                                <img src="{{ movie.poster_text }}" class="card-img-top" alt="Movie poster">
+                                <img src="{{ movie.poster }}" class="card-img-top" alt="Movie poster">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ movie.title_text }}</h5>
-                                    <p class="card-text">{{ movie.original_title_text }} ({{ movie.year_integer }})</p>
+                                    <h5 class="card-title">{{ movie.local_title }}</h5>
+                                    <p class="card-text">{{ movie.original_title }} ({{ movie.production_year }})</p>
                                     <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary">Open this
                                         title</a>
                                 </div>

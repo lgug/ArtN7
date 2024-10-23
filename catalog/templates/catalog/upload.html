@@ -263,7 +263,7 @@
                     </div>
                 </div>
                 <div class="col align-content-center">
-                    <p class="text-warning-emphasis" id="rating_text"><strong>0/10</strong></p>
+                    <p class="text-warning-emphasis" id="user_rating"><strong>0/10</strong></p>
                 </div>
             </div>
 
@@ -274,7 +274,7 @@
             <div class="row">
                 <div class="col-4">
                     <label class="form-label" for="movie-input-tag">Etichetta:</label>
-                    <input class="form-control no-validation" type="text" id="movie-input-tag">
+                    <input class="form-control no-validation" type="text" id="movie-input-tag" placeholder="Original">
                 </div>
                 <div class="col-3">
                     <label class="form-label" for="movie-input-type">Formato: </label>
@@ -378,7 +378,7 @@
 
 
     function setNewRating(n) {
-        document.getElementById('rating_text').innerHTML = "<strong>" + n + "/10</strong>";
+        document.getElementById('user_rating').innerHTML = "<strong>" + n + "/10</strong>";
         document.getElementById('rating').value = n;
         document.getElementsByName('star').forEach(value => {
             if (value.value <= n) {

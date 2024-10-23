@@ -1,76 +1,82 @@
 from django.db import models
 
+FILE_TYPE_VIDEO_KEY = 'VIDEO'
+FILE_TYPE_AUDIO_KEY = 'AUDIO'
+FILE_TYPE_SUBS_KEY = 'SUBS'
+FILE_TYPE_OTHER_KEY = 'OTHER'
+
 
 class Movie(models.Model):
-    title_text = models.CharField(max_length=1024)
-    original_title_text = models.CharField(max_length=1024, null=True)
-    year_integer = models.IntegerField()
-    poster_text = models.TextField()
-    imdb_id_text = models.CharField(max_length=64)
-    rating_integer = models.IntegerField()
+    local_title = models.CharField(max_length=2048)
+    original_title = models.CharField(max_length=2048, null=True)
+    production_year = models.IntegerField()
+    poster = models.TextField()
+    imdb_id = models.CharField(max_length=64)
+    user_rating = models.IntegerField()
 
     def __str__(self):
-        return self.title_text + " (" + str(self.year_integer) + ")"
+        return f"{self.local_title} ({str(self.production_year)})"
 
 
 class Country(models.Model):
-    country_text = models.CharField(max_length=1024)
+    country_name = models.CharField(max_length=2048)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.country_text
+        return self.country_name
 
 
 class Director(models.Model):
-    name_text = models.CharField(max_length=1024)
+    director_name = models.CharField(max_length=2048)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name_text
+        return self.director_name
 
 
 class Actor(models.Model):
-    name_text = models.CharField(max_length=1024)
+    actor_name = models.CharField(max_length=2048)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name_text
+        return self.actor_name
 
 
 class Screenwriter(models.Model):
-    name_text = models.CharField(max_length=1024)
+    screenwriter_name = models.CharField(max_length=2048)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name_text
+        return self.screenwriter_name
 
 
 class Genre(models.Model):
-    genre_text = models.CharField(max_length=1024)
+    genre = models.CharField(max_length=128)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.genre_text
+        return self.genre
 
 
 class Saga(models.Model):
-    name_text = models.CharField(max_length=1024)
+    saga = models.CharField(max_length=128)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name_text
+        return self.saga
 
 
 class File(models.Model):
-    TYPE_CHOICES = {'VIDEO': 'Video',
-                    'AUDIO': 'Audio',
-                    'SUBS': 'Subtitles',
-                    'OTHER': 'Other'}
-    file_name_text = models.CharField(max_length=2048)
+    TYPE_CHOICES = {FILE_TYPE_VIDEO_KEY: 'Video',
+                    FILE_TYPE_AUDIO_KEY: 'Audio',
+                    FILE_TYPE_SUBS_KEY: 'Subtitles',
+                    FILE_TYPE_OTHER_KEY: 'Other'}
+    filename = models.CharField(max_length=2048)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    type_text = models.CharField(max_length=1024, choices=TYPE_CHOICES)
-    tag_text = models.CharField(max_length=1024)
-    hash_text = models.CharField(max_length=512)
+    folder = models.CharField(max_length=1024, default="data")
+    type = models.CharField(max_length=1024, choices=TYPE_CHOICES)
+    tag = models.CharField(max_length=1024)
+    file_hash = models.CharField(max_length=512)
 
     def __str__(self):
-        return self.file_name_text
+        return f"{self.filename} ({self.movie.local_title})"

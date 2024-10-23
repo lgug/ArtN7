@@ -30,6 +30,105 @@
     </div>
 </div>
 
+<div class="modal fade" id="fileInfoModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="fileInfoModalLabel">File information</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="fileInfoResultText" class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            File size
+                        </div>
+                        <div class="col" id="fileInfoFileSize">
+                            -
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            File type
+                        </div>
+                        <div class="col" id="fileInfoFileType">
+                            -
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Creation date
+                        </div>
+                        <div class="col" id="fileInfoCreationDate">
+                            -
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Last modified date
+                        </div>
+                        <div class="col" id="fileInfoLastModifiedDate">
+                            -
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Resolution
+                        </div>
+                        <div class="col" id="fileInfoResolution">
+                            -
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Aspect ratio
+                        </div>
+                        <div class="col" id="fileInfoAspectRatio">
+                            -
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Bitrate
+                        </div>
+                        <div class="col"  id="fileInfoBitrate">
+                            -
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Duration
+                        </div>
+                        <div class="col" id="fileInfoDuration">
+                            -
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Frame rate
+                        </div>
+                        <div class="col" id="fileInfoFrameRate">
+                            -
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Codec
+                        </div>
+                        <div class="col" id="fileInfoCodec">
+                            -
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- body -->
 {% include 'catalog/catalog_navbar.html' %}
@@ -40,10 +139,10 @@
     <div class="container border rounded align-items-center">
         <div class="row g-1">
             <div class="col-9">
-                <h1 class="my-3">{{ movie.title_text }}</h1>
+                <h1 class="my-3">{{ movie.local_title }}</h1>
                 <div class="border-bottom my-3"></div>
-                <p><b>Titolo originale</b>: {{ movie.original_title_text }}</p>
-                <p><b>Anno di produzione</b>: {{ movie.year_integer }}</p>
+                <p><b>Titolo originale</b>: {{ movie.original_title }}</p>
+                <p><b>Anno di produzione</b>: {{ movie.production_year }}</p>
                 <p><b>Paesi di produzione</b>: {{ countries }}</p>
                 {% if saga != '' %}
                     <p><b>Saga:</b> {{ saga }}</p>
@@ -54,7 +153,7 @@
                 <p><b>Attori principali</b>: {{ actors }}</p>
                 <div class="mb-3">
                     <p><strong>Valutazione:</strong>
-                        <input type="hidden" id="rating" name="rating" value={{ movie.rating_integer }}>
+                        <input type="hidden" id="rating" name="rating" value={{ movie.user_rating }}>
                         <button type="button" name="star" onclick="updateRatingAndSave(1)" value="1"
                                 class="catalog-star-button">
                             <img id="star-1" src="{% static 'images/star_no_filled.svg' %}" alt="1">
@@ -98,13 +197,13 @@
                     </p>
                 </div>
 
-                <p><b>IMDb ID</b>: {{ movie.imdb_id_text }}</p>
+                <p><b>IMDb ID</b>: {{ movie.imdb_id }}</p>
             </div>
 
             <div class="col-3">
                 <figure class="figure my-2">
                     <img class="figure-img img-fluid shadow-sm rounded"
-                         src="{{ movie.poster_text }}"
+                         src="{{ movie.poster }}"
                          id="poster"
                          width="500px"
                          alt="Movie poster">
@@ -127,14 +226,18 @@
                     {% if videos %}
                         {% for x in videos %}
                             <tr>
-                                <td class="align-middle">{{ x.file.file_name_text }}</td>
-                                <td class="align-middle">{{ x.file.tag_text }}</td>
+                                <td class="align-middle">{{ x.file.filename }}</td>
+                                <td class="align-middle">{{ x.file.tag }}</td>
                                 <td class="align-middle">
                                     <a class="btn btn-primary"
-                                       href="{% url 'download_file' movie.id x.file.file_name_text %}">Scarica</a>
-                                    <a class="btn btn-primary" href="file://{{ x.path }}" target="_blank">Apri</a>
-                                    <button class="btn btn-warning" id="{{ x.file.hash_text }}"
-                                            onclick="checkFileHash('{{ x.file.hash_text }}')">Integrity check
+                                       href="{% url 'download_file' movie.id x.file.filename %}">Download</a>
+                                    <button class="btn btn-warning" id="{{ x.file.file_hash }}"
+                                            onclick="checkFileHash('{{ x.file.file_hash }}')"
+                                    >Integrity check
+                                    </button>
+                                    <button class="btn btn-warning"
+                                            onclick="getFileInfo({{ x.file.id }})"
+                                    >Show info
                                     </button>
                                 </td>
                             </tr>
@@ -161,14 +264,19 @@
                     {% if other_files %}
                         {% for x in other_files %}
                             <tr>
-                                <td class="align-middle">{{ x.file.file_name_text }}</td>
-                                <td class="align-middle">{{ x.file.type_text }}</td>
-                                <td class="align-middle">{{ x.file.tag_text }}</td>
+                                <td class="align-middle">{{ x.file.filename }}</td>
+                                <td class="align-middle">{{ x.file.type }}</td>
+                                <td class="align-middle">{{ x.file.tag }}</td>
                                 <td class="align-middle">
                                     <a class="btn btn-primary"
-                                       href="{% url 'download_file' movie.id x.file.file_name_text %}">Scarica</a>
-                                    <button class="btn btn-warning" id="{{ x.file.hash_text }}"
-                                            onclick="checkFileHash('{{ x.file.hash_text }}')">Integrity check
+                                       href="{% url 'download_file' movie.id x.file.filename %}">Download</a>
+                                    <button class="btn btn-warning" id="{{ x.file.file_hash }}"
+                                            onclick="checkFileHash('{{ x.file.file_hash }}')"
+                                    >Integrity check
+                                    </button>
+                                    <button class="btn btn-warning"
+                                            onclick="getFileInfo({{ x.file.id }})"
+                                    >Show info
                                     </button>
                                 </td>
                             </tr>
@@ -236,6 +344,76 @@
         xhttp.send('{"hash": "' + file_hash + '", "movie_id": {{ movie.id }}}');
     }
 
+    function getFileInfo(file_id) {
+        showSpinner();
+        let xhttp = new XMLHttpRequest();
+        xhttp.onload = function (e) {
+            let modal = new bootstrap.Modal(document.getElementById('fileInfoModal'), {
+                keyboard: false
+            });
+            hideSpinner();
+
+            const data = JSON.parse(e.target.response);
+
+            let fileSize = document.getElementById("fileInfoFileSize");
+            let fileType = document.getElementById("fileInfoFileType");
+            let creationDate = document.getElementById("fileInfoCreationDate");
+            let lastModifiedDate = document.getElementById("fileInfoLastModifiedDate");
+            let resolution = document.getElementById("fileInfoResolution");
+            let aspectRatio = document.getElementById("fileInfoAspectRatio");
+            let bitrate = document.getElementById("fileInfoBitrate");
+            let duration = document.getElementById("fileInfoDuration");
+            let frame_rate = document.getElementById("fileInfoFrameRate");
+            let codec = document.getElementById("fileInfoCodec");
+
+            fileSize.innerHTML = formatFileSize(data['size']);
+            fileType.innerHTML = data['type'];
+            creationDate.innerHTML = formatDate(data['created']);
+            lastModifiedDate.innerHTML = formatDate(data['last_modified']);
+            if (data['weight'] && data['height']) {
+                resolution.innerHTML = data['width'] + ' x ' + data['height'];
+                resolution.parentElement.hidden = false;
+            } else {
+                resolution.parentElement.hidden = true;
+            }
+            if (data['aspectRatio']) {
+                aspectRatio.innerHTML = data['aspect_ratio'];
+                aspectRatio.parentElement.hidden = false;
+            } else {
+                aspectRatio.parentElement.hidden = true;
+            }
+            if (data['bitrate']) {
+                bitrate.innerHTML = data['bitrate'] + ' bit/s';
+                bitrate.parentElement.hidden = false;
+            } else {
+                bitrate.parentElement.hidden = true;
+            }
+            if (data['duration']) {
+                duration.innerHTML = formatDuration(data['duration']);
+                duration.parentElement.hidden = false;
+            } else {
+                duration.parentElement.hidden = true;
+            }
+            if (data['frame_rate']) {
+                frame_rate.innerHTML = data['frame_rate']
+                frame_rate.parentElement.hidden = false;
+            } else {
+                frame_rate.parentElement.hidden = true;
+            }
+            if (data['codec']) {
+                codec.innerHTML = data['codec'];
+                codec.parentElement.hidden = false;
+            } else {
+                codec.parentElement.hidden = true;
+            }
+
+            modal.show()
+        }
+        xhttp.open('GET', "/catalog/file_info/" + file_id)
+        xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+        xhttp.send();
+    }
+
     function updateRating(n) {
         document.getElementById('rating').value = n;
         document.getElementsByName('star').forEach(value => {
@@ -272,6 +450,34 @@
             }
         }
         return "";
+    }
+
+    function formatDuration(time) {
+        let h = "0" + ((time / 3600) | 0);
+        let m = "0" + (((time % 3600) / 60) | 0);
+        let s = "0" + (((time % 3600) % 60) | 0);
+        return h.substr(-2) + ':' + m.substr(-2) + ':' + s.substr(-2);
+    }
+
+    function formatDate(timeFromEpoch) {
+        let date = new Date(timeFromEpoch * 1000);
+        let month = "0" + (date.getMonth() + 1);
+        let hours = "0" + date.getHours();
+        let minutes = "0" + date.getMinutes();
+        let seconds = "0" + date.getSeconds();
+        return date.getDate() + '/' + month.substr(-2) + '/' + date.getFullYear() + ' ' + hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    }
+
+    function formatFileSize(size) {
+        if (size > Math.pow(1024, 3)) {
+            return (size / Math.pow(1024, 3)).toFixed(2) + " GB";
+        } else if (size > Math.pow(1024, 2)) {
+            return (size / Math.pow(1024, 2)).toFixed(2) + " MB";
+        } else if (size > 1024) {
+            return (size / 1024).toFixed(2) + " KB";
+        } else {
+            return (size | 0) + " B";
+        }
     }
 </script>
 

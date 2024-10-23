@@ -1,0 +1,3 @@
+HEADER_CHUNK_NUMBER = 'Num-Chunk'
+HEADER_MOVIE_TYPE = 'Movie-Type'
+HEADER_MOVIE_TAG = 'Movie-Tag'

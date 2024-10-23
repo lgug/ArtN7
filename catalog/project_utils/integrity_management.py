@@ -134,12 +134,12 @@ def check_movie(movie_synthesis: MovieSynthesis):
 def get_all_movie_synthesis():
     movies = Movie.objects.all()
     synthesis = [MovieSynthesis(movie.id,
-                                movie.title_text,
-                                movie.original_title_text,
-                                movie.year_integer,
-                                [FileSynthesis(f.file_name_text,
+                                movie.local_title,
+                                movie.original_title,
+                                movie.production_year,
+                                [FileSynthesis(f.filename,
                                                movie.id,
-                                               f.hash_text)
+                                               f.file_hash)
                                  for f in list(movie.file_set.all())])
                  for movie in movies]
     return synthesis

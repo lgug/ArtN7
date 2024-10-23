@@ -1,8 +1,10 @@
-import base64
+import ffmpeg
+import csv
 import json
-import random
 import os.path
+import random
 import shutil
+import magic
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
@@ -10,9 +12,13 @@ from django.http import JsonResponse, FileResponse
 from django.shortcuts import render
 
 import catalog.catalog_managment
-from catalog.models import Movie, Country, Genre, Saga, Director, Screenwriter, Actor, File
-from catalog.project_utils import integrity_management, logmanager, filemanager, data_validation
-from catalog.project_utils.filemanager import build_movie_folder_name, chunk_sorter
+import catalog.project_utils.imdb_manager
+from catalog.models import Movie, Country, Genre, Saga, Director, Screenwriter, Actor, File, FILE_TYPE_VIDEO_KEY
+from catalog.project_utils import integrity_management, logmanager, filemanager, data_validation, imdb_manager
+from catalog.project_utils.filemanager import TEMP_ROOT, \
+    TEMP_META_FILE, DATA_ROOT, TEMP_ZIP_FILE, check_temp_folder, REPORT_FILE
+from catalog.project_utils.http_manager import HEADER_CHUNK_NUMBER, HEADER_MOVIE_TYPE, \
+    HEADER_MOVIE_TAG
 from catalog.project_utils.integrity_management import MovieSynthesis
 
 SEPARATOR = " · "
@@ -35,7 +41,7 @@ def movie_details(request, movie_id):
     genres_str = SEPARATOR.join([str(x) for x in list(genres)])
 
     saga = Saga.objects.filter(movie=movie)
-    saga_str = saga[0].name_text if len(saga) > 0 else ""
+    saga_str = saga[0].saga if len(saga) > 0 else ""
 
     directors = Director.objects.filter(movie=movie)
     directors_str = SEPARATOR.join([str(x) for x in list(directors)])
@@ -62,10 +68,9 @@ def get_all_videos(movie):
     _map = []
 
     try:
-        files = File.objects.filter(movie=movie, type_text='Video')
+        files = File.objects.filter(movie=movie, type=File.TYPE_CHOICES[FILE_TYPE_VIDEO_KEY])
         for file in files:
-            folder = [x for x in os.listdir('data') if x.startswith(str(file.movie.id))]
-            _map.append({"path": os.path.abspath(f"data/{folder[0]}/{file.file_name_text}"), "file": file})
+            _map.append({"path": os.path.abspath(f"{file.folder}/{file.filename}"), "file": file})
         return _map
     except File.DoesNotExist:
         return []
@@ -75,10 +80,9 @@ def get_all_other_files(movie):
     _map = []
 
     try:
-        not_videos = File.objects.exclude(type_text="Video").filter(movie=movie)
+        not_videos = File.objects.exclude(type=File.TYPE_CHOICES[FILE_TYPE_VIDEO_KEY]).filter(movie=movie)
         for file in not_videos:
-            folder = [x for x in os.listdir('data') if x.startswith(str(file.movie.id))]
-            _map.append({"path": os.path.abspath(f"data/{folder[0]}/{file.file_name_text}"), "file": file})
+            _map.append({"path": os.path.abspath(f"{file.folder}/{file.filename}"), "file": file})
         return _map
     except File.DoesNotExist:
         return []
@@ -95,11 +99,12 @@ def upload_function(request):
 
     check, message = data_validation.validate_input_data(request.POST)
     if not check:
-        logmanager.new_event(request, logmanager.LogLevel.ERROR, logmanager.Function.UPLOAD, "Upload check has not passed")
+        logmanager.new_event(request, logmanager.LogLevel.ERROR, logmanager.Function.UPLOAD,
+                             "Upload check has not passed")
         context = {"movie_id": None, "success": check, "message": message}
         return render(request, 'catalog/upload_result.html', context)
 
-    title = request.POST["title"]
+    local_title = request.POST["title"]
     original_title = request.POST["original_title"] if request.POST["original_title"] != '' else None
     year = int(request.POST["year"])
     saga = request.POST["saga"] if request.POST["saga"] != '' else None
@@ -112,43 +117,44 @@ def upload_function(request):
     rating = int(request.POST["rating"])
     poster = request.POST["poster"]
 
-    movie = Movie(title_text=title,
-                  original_title_text=original_title,
-                  year_integer=year,
-                  rating_integer=rating,
-                  poster_text=poster,
-                  imdb_id_text=imdb_id)
+    movie = Movie(local_title=local_title,
+                  original_title=original_title,
+                  production_year=year,
+                  user_rating=rating,
+                  poster=poster,
+                  imdb_id=imdb_id)
     movie.save()
 
     try:
+        print("saving file...")
         catalog.catalog_managment.save_movie_files(movie)
     except Exception as e:
         logmanager.new_event(request, logmanager.LogLevel.ERROR, logmanager.Function.UPLOAD,
                              f"Error trying to save a new movie: {e}")
 
         movie.delete()
-        context = {"movie_id": None, "success": False, "message": str(e.__cause__)}
+        context = {"movie_id": None, "success": False, "message": str(e)}
         return render(request, 'catalog/upload_result.html', context)
 
     for director in directors:
-        d = Director(name_text=director, movie=movie)
+        d = Director(director_name=director, movie=movie)
         d.save()
     for actor in actors:
-        a = Actor(name_text=actor, movie=movie)
+        a = Actor(actor_name=actor, movie=movie)
         a.save()
     for screenwriter in screenwriters:
-        s = Screenwriter(name_text=screenwriter, movie=movie)
+        s = Screenwriter(screenwriter_name=screenwriter, movie=movie)
         s.save()
 
     for country in countries:
-        c = Country(country_text=country, movie=movie)
+        c = Country(country_name=country, movie=movie)
         c.save()
     for genre in genres:
-        g = Genre(genre_text=genre, movie=movie)
+        g = Genre(genre=genre, movie=movie)
         g.save()
 
     if saga is not None:
-        sg = Saga(name_text=saga, movie=movie)
+        sg = Saga(saga=saga, movie=movie)
         sg.save()
 
     context = {"movie_id": movie.id, "success": True, "message": "OK"}
@@ -157,14 +163,18 @@ def upload_function(request):
 
 
 def upload_temp_file_chunk(request, name):
-    if not os.path.exists(f"temp/D_{name}"):
-        os.makedirs(f"temp/D_{name}", exist_ok=True)
+    # filemanager.check_temp_movie_folder(name)
+    filemanager.check_temp_folder()
 
-    chunk_number = request.headers['Num-Chunk']
+    chunk_number = request.headers[HEADER_CHUNK_NUMBER]
+    print("Saving chunk n. " + str(chunk_number))
     content = request.body
 
-    with open(f'temp/D_{name}/{chunk_number}', 'wb') as destination:
-        destination.write(content)
+    with open(f"{TEMP_ROOT}/{name}", "ab") as final_file:
+        final_file.write(content)
+
+    # with open(f'temp/D_{name}/{chunk_number}', 'wb') as destination:
+    #     destination.write(content)
 
     return JsonResponse({'status': 'ok'})
 
@@ -172,31 +182,49 @@ def upload_temp_file_chunk(request, name):
 def upload_temp_file(request, name):
     logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.UPLOAD,
                          f"Uploading of new file with name {name} in the temp folder.")
-    type_file = request.headers['Movie-Type']
-    tag = request.headers['Movie-Tag']
+    type_file = request.headers[HEADER_MOVIE_TYPE]
+    tag = request.headers[HEADER_MOVIE_TAG]
+    if tag == '':
+        tag = 'Original'
 
-    chunk_files = os.listdir(f"temp/D_{name}")
-    chunk_files.sort(key=chunk_sorter)
-    for chunk in chunk_files:
-        with open(f"temp/D_{name}/{chunk}", 'rb') as source:
-            content = source.read()
-        os.remove(f"temp/D_{name}/{chunk}")
-        with open(f"temp/{name}", 'ab') as file:
-            file.write(content)
+    # movie_temp_folder = check_temp_movie_folder(name)
+    # chunk_files = os.listdir(movie_temp_folder)
+    # print(chunk_files)
+    # chunk_files.sort(key=chunk_sorter)
+    # print(chunk_files)
+    # for chunk in chunk_files:
+    #     with open(f"{movie_temp_folder}/{chunk}", 'rb') as source:
+    #         content = source.read()
+    #     os.remove(f"{movie_temp_folder}/{chunk}")
+    #     with open(f"{TEMP_ROOT}/{name}", 'ab') as file:
+    #         file.write(content)
+    #
+    # shutil.rmtree(movie_temp_folder)
 
-    shutil.rmtree(f"temp/D_{name}")
-
-    with open('temp/meta.csv', 'a') as meta:
+    with open(f"{TEMP_ROOT}/{TEMP_META_FILE}", 'a') as meta:
         meta.write(f"{name};{type_file};{tag}\n")
 
+    print("file saved successfully")
     return JsonResponse({'status': 'ok'})
 
 
 def remove_temp_file(request, name):
     logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.UPLOAD,
                          f"Removing temp file with name {name} from the temp folder.")
-    if os.path.exists(f"temp/{name}"):
-        os.remove(f"temp/{name}")
+    if os.path.exists(f"{TEMP_ROOT}/{name}"):
+        os.remove(f"{TEMP_ROOT}/{name}")
+
+    meta_file = []
+    with open(f"{TEMP_ROOT}/{TEMP_META_FILE}", newline='') as meta:
+        meta_csv = csv.DictReader(meta, delimiter=';', fieldnames=['filename', 'type', 'tag'])
+        for row in meta_csv:
+            if row['filename'] != name:
+                meta_file.append(row)
+
+    with open(f"{TEMP_ROOT}/{TEMP_META_FILE}", "w", newline='') as meta:
+        writer = csv.DictWriter(meta, delimiter=';', fieldnames=['filename', 'type', 'tag'])
+        writer.writerows(meta_file)
+
     return JsonResponse({'status': 'ok'})
 
 
@@ -204,16 +232,16 @@ def imdb_search(request, imdb_id):
     logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.UPLOAD,
                          f"Searching information from IMDb for id {imdb_id}.")
 
-    return JsonResponse(catalog.catalog_managment.retrieve_info_from_imdb(imdb_id))
+    return JsonResponse(imdb_manager.retrieve_info_from_imdb(imdb_id))
 
 
 def download_file(request, movie_id, name):
     logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.DOWNLOAD,
                          f"Start downloading of file with name {name} (movie id: {movie_id}).")
 
-    folder = [x for x in os.listdir('data') if x.startswith(str(movie_id))]
+    folder = [x for x in os.listdir(DATA_ROOT) if x.startswith(str(movie_id))]
     if len(folder) > 0:
-        return FileResponse(open(f"data/{folder[0]}/{name}", 'rb'), as_attachment=True)
+        return FileResponse(open(f"{DATA_ROOT}/{folder[0]}/{name}", 'rb'), as_attachment=True)
     else:
         return None
 
@@ -237,22 +265,21 @@ def download_catalog_report(request):
     for movie in movies:
         report["movies"].append({
             "id": movie.id,
-            "title": movie.title_text,
-            "original_title": movie.original_title_text,
-            "year": movie.year_integer,
-            "imdb_id": movie.imdb_id_text,
+            "title": movie.local_title,
+            "original_title": movie.original_title,
+            "year": movie.production_year,
+            "imdb_id": movie.imdb_id,
             "files": [{
-                "file_name": x.file_name_text,
-                "file_hash": x.hash_text
+                "file_name": x.filename,
+                "file_hash": x.file_hash
             } for x in File.objects.filter(movie_id__exact=movie.id)]
         })
 
-    if not os.path.exists("temp"):
-        os.makedirs("temp")
-    with open("temp/report.json", 'w') as outfile:
+    check_temp_folder()
+    with open(f"{TEMP_ROOT}/{REPORT_FILE}", 'w') as outfile:
         outfile.write(json.dumps(report))
 
-    return FileResponse(open("temp/report.json", 'rb'), as_attachment=True)
+    return FileResponse(open(f"{TEMP_ROOT}/{REPORT_FILE}", 'rb'), as_attachment=True)
 
 
 def search(request):
@@ -273,31 +300,20 @@ def get_search_result(request):
                          f"Start searching movies with title='{title}', year='{year}', saga='{saga}', director='{director}', actor='{actor}'")
 
     result = Movie.objects.filter(
-        Q(title_text__icontains=title.lower()) |
-        Q(original_title_text__icontains=title.lower())
+        Q(local_title__icontains=title.lower()) |
+        Q(original_title__icontains=title.lower())
     )
     if year != '' and int(year) > 0:
-        result = result.filter(year_integer__exact=int(year))
+        result = result.filter(production_year__exact=int(year))
     if saga != '':
-        result = result.filter(saga__name_text__icontains=saga.lower())
+        result = result.filter(saga__saga__icontains=saga.lower())
     if director != '':
-        result = result.filter(director__name_text__icontains=director.lower()).distinct()
+        result = result.filter(director__director_name__icontains=director.lower()).distinct()
     if actor != '':
-        result = result.filter(actor__name_text__icontains=actor.lower()).distinct()
+        result = result.filter(actor__actor_name__icontains=actor.lower()).distinct()
 
     context = {'results': result}
     return render(request, 'catalog/search.html', context)
-
-
-def play_video(request, movie_id, name):  # TODO serve?
-    folder = [x for x in os.listdir('data') if x.startswith(str(movie_id))]
-    extension = name[name.rfind(".") + 1:]
-
-    context = {
-        'path': f"data/{folder[0]}/{name}",
-        "type": f"video/{extension}"
-    }
-    return render(request, 'catalog/player.html', context)
 
 
 def update_rating(request, movie_id):
@@ -306,7 +322,7 @@ def update_rating(request, movie_id):
 
     new_rating = int(request.POST['rating'])
     movie = Movie.objects.get(pk=movie_id)
-    movie.rating_integer = new_rating
+    movie.user_rating = new_rating
     movie.save()
 
     return JsonResponse({'status': 'ok'})
@@ -337,11 +353,11 @@ def check_file_hash(request):
     logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.INTEGRITY_CHECK,
                          f"Started integrity check of file with hash {file_info['hash']}")
 
-    file = File.objects.filter(hash_text__iexact=file_info['hash'])[0]
+    file = File.objects.filter(file_hash__iexact=file_info['hash'])[0]
 
     integrity_result = integrity_management.FileIntegrityCheckResult(file_info['movie_id'],
-                                                                     file.file_name_text,
-                                                                     file.hash_text)
+                                                                     file.filename,
+                                                                     file.file_hash)
     integrity_result.check_file()
 
     return JsonResponse(integrity_result.to_dict())
@@ -351,7 +367,7 @@ def suggested(request):
     logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.SUGGESTED,
                          "Open Suggested movies page.")
 
-    id_rating_list = list(Movie.objects.values_list('id', 'rating_integer'))
+    id_rating_list = list(Movie.objects.values_list('id', 'user_rating'))
     ids = [i[0] for i in id_rating_list]
 
     selected_movies = []
@@ -370,6 +386,35 @@ def download_all_movie_files(request, movie_id):
                          f"Request downloading of all files for movie with id {movie_id}.")
 
     folder = filemanager.build_movie_folder_name(Movie.objects.get(pk=movie_id))
-    shutil.make_archive("temp/archive", 'zip', folder)
+    shutil.make_archive(f"{TEMP_ROOT}/{TEMP_ZIP_FILE.split('.')[0]}",
+                        f"{TEMP_ZIP_FILE.split('.')[1]}",
+                        folder)
 
-    return FileResponse(open('temp/archive.zip', 'rb'), as_attachment=True)
+    return FileResponse(open(f'{TEMP_ROOT}/{TEMP_ZIP_FILE}', 'rb'), as_attachment=True)
+
+
+def file_info(request, file_id):
+    file = File.objects.get(pk=file_id)
+    path = f"{file.folder}/{file.filename}"
+
+    info = {
+        "size": os.path.getsize(path),
+        "last_modified": os.path.getmtime(path),
+        "created": os.path.getctime(path),
+        "type": magic.from_file(path, mime=True)
+    }
+
+    if file.type == File.TYPE_CHOICES[FILE_TYPE_VIDEO_KEY]:
+        probe = ffmpeg.probe(path)
+        video_info = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
+        info['bitrate'] = probe['format']['bit_rate']
+        info['duration'] = probe['format']['duration']
+        if len(video_info) > 0:
+            video_info = video_info[0]
+            info['frame_rate'] = video_info['avg_frame_rate']
+            info['codec'] = video_info['codec_long_name']
+            info['aspect_ratio'] = video_info['display_aspect_ratio']
+            info['width'] = video_info['width']
+            info['height'] = video_info['height']
+
+    return JsonResponse(info)

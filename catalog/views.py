@@ -187,20 +187,6 @@ def upload_temp_file(request, name):
     if tag == '':
         tag = 'Original'
 
-    # movie_temp_folder = check_temp_movie_folder(name)
-    # chunk_files = os.listdir(movie_temp_folder)
-    # print(chunk_files)
-    # chunk_files.sort(key=chunk_sorter)
-    # print(chunk_files)
-    # for chunk in chunk_files:
-    #     with open(f"{movie_temp_folder}/{chunk}", 'rb') as source:
-    #         content = source.read()
-    #     os.remove(f"{movie_temp_folder}/{chunk}")
-    #     with open(f"{TEMP_ROOT}/{name}", 'ab') as file:
-    #         file.write(content)
-    #
-    # shutil.rmtree(movie_temp_folder)
-
     with open(f"{TEMP_ROOT}/{TEMP_META_FILE}", 'a') as meta:
         meta.write(f"{name};{type_file};{tag}\n")
 
@@ -405,16 +391,19 @@ def file_info(request, file_id):
     }
 
     if file.type == File.TYPE_CHOICES[FILE_TYPE_VIDEO_KEY]:
-        probe = ffmpeg.probe(path)
-        video_info = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
-        info['bitrate'] = probe['format']['bit_rate']
-        info['duration'] = probe['format']['duration']
-        if len(video_info) > 0:
-            video_info = video_info[0]
-            info['frame_rate'] = video_info['avg_frame_rate']
-            info['codec'] = video_info['codec_long_name']
-            info['aspect_ratio'] = video_info['display_aspect_ratio']
-            info['width'] = video_info['width']
-            info['height'] = video_info['height']
+        try:
+            probe = ffmpeg.probe(path)
+            video_info = [stream for stream in probe["streams"] if stream["codec_type"] == "video"]
+            info['bitrate'] = probe['format']['bit_rate']
+            info['duration'] = probe['format']['duration']
+            if len(video_info) > 0:
+                video_info = video_info[0]
+                info['frame_rate'] = video_info['avg_frame_rate']
+                info['codec'] = video_info['codec_long_name']
+                info['aspect_ratio'] = video_info['display_aspect_ratio']
+                info['width'] = video_info['width']
+                info['height'] = video_info['height']
+        except Exception as e:
+            pass
 
     return JsonResponse(info)

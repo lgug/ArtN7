@@ -6,6 +6,7 @@
     <title>ArtN7 - Search</title>
     <link rel="stylesheet" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'css/main-style.css' %}">
+    <script src="{% static 'js/search.js' %}"></script>
 </head>
 <body>
 
@@ -124,9 +125,9 @@
 </div>
 
 <script>
-    const switchTableView = document.getElementById('switchTableView');
+    const TABLE_VIEW_SWITCHER = document.getElementById('switchTableView');
 
-    switchTableView.addEventListener('change', (event) => {
+    TABLE_VIEW_SWITCHER.addEventListener('change', (event) => {
         if (event.target.checked) {
             document.getElementById('tableView').style.display = 'block';
             document.getElementById('cardView').style.display = 'none';

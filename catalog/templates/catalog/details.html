@@ -7,7 +7,11 @@
     <link rel="stylesheet" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'css/main-style.css' %}">
     <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.js' %}"></script>
-    <script src="{% static 'js/main-functions.js' %}"></script>
+    <script src="{% static 'js/details.js' %}"></script>
+    <script>
+        const STAR_FILLED_URL = "{% static 'images/star_filled.svg' %}";
+        const STAR_EMPTY_URL = "{% static 'images/star_no_filled.svg' %}";
+    </script>
 </head>
 <body>
 
@@ -92,7 +96,7 @@
                         <div class="col">
                             Bitrate
                         </div>
-                        <div class="col"  id="fileInfoBitrate">
+                        <div class="col" id="fileInfoBitrate">
                             -
                         </div>
                     </div>
@@ -154,43 +158,43 @@
                 <div class="mb-3">
                     <p><strong>Valutazione:</strong>
                         <input type="hidden" id="rating" name="rating" value={{ movie.user_rating }}>
-                        <button type="button" name="star" onclick="updateRatingAndSave(1)" value="1"
+                        <button type="button" name="star" onclick="updateRatingAndSave(1, {{ movie.id }})" value="1"
                                 class="catalog-star-button">
                             <img id="star-1" src="{% static 'images/star_no_filled.svg' %}" alt="1">
                         </button>
-                        <button type="button" name="star" onclick="updateRatingAndSave(2)" value="2"
+                        <button type="button" name="star" onclick="updateRatingAndSave(2, {{ movie.id }})" value="2"
                                 class="catalog-star-button">
                             <img id="star-2" src="{% static 'images/star_no_filled.svg' %}" alt="2">
                         </button>
-                        <button type="button" name="star" onclick="updateRatingAndSave(3)" value="3"
+                        <button type="button" name="star" onclick="updateRatingAndSave(3, {{ movie.id }})" value="3"
                                 class="catalog-star-button">
                             <img id="star-3" src="{% static 'images/star_no_filled.svg' %}" alt="3">
                         </button>
-                        <button type="button" name="star" onclick="updateRatingAndSave(4)" value="4"
+                        <button type="button" name="star" onclick="updateRatingAndSave(4, {{ movie.id }})" value="4"
                                 class="catalog-star-button">
                             <img id="star-4" src="{% static 'images/star_no_filled.svg' %}" alt="4">
                         </button>
-                        <button type="button" name="star" onclick="updateRatingAndSave(5)" value="5"
+                        <button type="button" name="star" onclick="updateRatingAndSave(5, {{ movie.id }})" value="5"
                                 class="catalog-star-button">
                             <img id="star-5" src="{% static 'images/star_no_filled.svg' %}" alt="5">
                         </button>
-                        <button type="button" name="star" onclick="updateRatingAndSave(6)" value="6"
+                        <button type="button" name="star" onclick="updateRatingAndSave(6, {{ movie.id }})" value="6"
                                 class="catalog-star-button">
                             <img id="star-6" src="{% static 'images/star_no_filled.svg' %}" alt="6">
                         </button>
-                        <button type="button" name="star" onclick="updateRatingAndSave(7)" value="7"
+                        <button type="button" name="star" onclick="updateRatingAndSave(7, {{ movie.id }})" value="7"
                                 class="catalog-star-button">
                             <img id="star-7" src="{% static 'images/star_no_filled.svg' %}" alt="7">
                         </button>
-                        <button type="button" name="star" onclick="updateRatingAndSave(8)" value="8"
+                        <button type="button" name="star" onclick="updateRatingAndSave(8, {{ movie.id }})" value="8"
                                 class="catalog-star-button">
                             <img id="star-8" src="{% static 'images/star_no_filled.svg' %}" alt="8">
                         </button>
-                        <button type="button" name="star" onclick="updateRatingAndSave(9)" value="9"
+                        <button type="button" name="star" onclick="updateRatingAndSave(9, {{ movie.id }})" value="9"
                                 class="catalog-star-button">
                             <img id="star-9" src="{% static 'images/star_no_filled.svg' %}" alt="9">
                         </button>
-                        <button type="button" name="star" onclick="updateRatingAndSave(10)" value="10"
+                        <button type="button" name="star" onclick="updateRatingAndSave(10, {{ movie.id }})" value="10"
                                 class="catalog-star-button">
                             <img id="star-10" src="{% static 'images/star_no_filled.svg' %}" alt="10">
                         </button>
@@ -232,7 +236,7 @@
                                     <a class="btn btn-primary"
                                        href="{% url 'download_file' movie.id x.file.filename %}">Download</a>
                                     <button class="btn btn-warning" id="{{ x.file.file_hash }}"
-                                            onclick="checkFileHash('{{ x.file.file_hash }}')"
+                                            onclick="checkFileHash('{{ x.file.file_hash }}', {{ movie.id }})"
                                     >Integrity check
                                     </button>
                                     <button class="btn btn-warning"
@@ -271,7 +275,7 @@
                                     <a class="btn btn-primary"
                                        href="{% url 'download_file' movie.id x.file.filename %}">Download</a>
                                     <button class="btn btn-warning" id="{{ x.file.file_hash }}"
-                                            onclick="checkFileHash('{{ x.file.file_hash }}')"
+                                            onclick="checkFileHash('{{ x.file.file_hash }}', {{ movie.id }})"
                                     >Integrity check
                                     </button>
                                     <button class="btn btn-warning"
@@ -299,186 +303,11 @@
     </div>
 </div>
 
-
-<script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.js' %}"></script>
 <script>
-
-    window.onload = function () {
-        let rating = parseInt(document.getElementById('rating').value);
-        updateRating(rating);
-    }
-
-    function checkFileHash(file_hash) {
-        showSpinner();
-        document.getElementById(file_hash).disabled = true;
-
-        let xhttp = new XMLHttpRequest();
-        xhttp.onload = function (e) {
-            console.log(e.target.response);
-
-            let modal = new bootstrap.Modal(document.getElementById('integrityModal'), {
-                keyboard: false
-            });
-            let modalLabel = document.getElementById("integrityModalLabel");
-            let modalText = document.getElementById("integrityResultText");
-
-            hideSpinner();
-            let result = JSON.parse(e.target.response);
-            if (result['whole']) {
-                modalLabel.innerHTML = "File is OK!";
-                modalLabel.classList.remove("text-danger");
-                modalLabel.classList.add("text-success");
-                modalText.innerHTML = "This file has passed the integrity check.";
-            } else {
-                modalLabel.innerHTML = "File is damaged!!!";
-                modalLabel.classList.remove("text-success");
-                modalLabel.classList.add("text-danger");
-                modalText.innerHTML = "The file has a different hash code and could be corrupted.";
-            }
-            modal.show();
-
-            document.getElementById(file_hash).disabled = false;
-        }
-        xhttp.open('POST', "/catalog/check_file_hash")
-        xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-        xhttp.send('{"hash": "' + file_hash + '", "movie_id": {{ movie.id }}}');
-    }
-
-    function getFileInfo(file_id) {
-        showSpinner();
-        let xhttp = new XMLHttpRequest();
-        xhttp.onload = function (e) {
-            let modal = new bootstrap.Modal(document.getElementById('fileInfoModal'), {
-                keyboard: false
-            });
-            hideSpinner();
-
-            const data = JSON.parse(e.target.response);
-
-            let fileSize = document.getElementById("fileInfoFileSize");
-            let fileType = document.getElementById("fileInfoFileType");
-            let creationDate = document.getElementById("fileInfoCreationDate");
-            let lastModifiedDate = document.getElementById("fileInfoLastModifiedDate");
-            let resolution = document.getElementById("fileInfoResolution");
-            let aspectRatio = document.getElementById("fileInfoAspectRatio");
-            let bitrate = document.getElementById("fileInfoBitrate");
-            let duration = document.getElementById("fileInfoDuration");
-            let frame_rate = document.getElementById("fileInfoFrameRate");
-            let codec = document.getElementById("fileInfoCodec");
-
-            fileSize.innerHTML = formatFileSize(data['size']);
-            fileType.innerHTML = data['type'];
-            creationDate.innerHTML = formatDate(data['created']);
-            lastModifiedDate.innerHTML = formatDate(data['last_modified']);
-            if (data['weight'] && data['height']) {
-                resolution.innerHTML = data['width'] + ' x ' + data['height'];
-                resolution.parentElement.hidden = false;
-            } else {
-                resolution.parentElement.hidden = true;
-            }
-            if (data['aspectRatio']) {
-                aspectRatio.innerHTML = data['aspect_ratio'];
-                aspectRatio.parentElement.hidden = false;
-            } else {
-                aspectRatio.parentElement.hidden = true;
-            }
-            if (data['bitrate']) {
-                bitrate.innerHTML = data['bitrate'] + ' bit/s';
-                bitrate.parentElement.hidden = false;
-            } else {
-                bitrate.parentElement.hidden = true;
-            }
-            if (data['duration']) {
-                duration.innerHTML = formatDuration(data['duration']);
-                duration.parentElement.hidden = false;
-            } else {
-                duration.parentElement.hidden = true;
-            }
-            if (data['frame_rate']) {
-                frame_rate.innerHTML = data['frame_rate']
-                frame_rate.parentElement.hidden = false;
-            } else {
-                frame_rate.parentElement.hidden = true;
-            }
-            if (data['codec']) {
-                codec.innerHTML = data['codec'];
-                codec.parentElement.hidden = false;
-            } else {
-                codec.parentElement.hidden = true;
-            }
-
-            modal.show()
-        }
-        xhttp.open('GET', "/catalog/file_info/" + file_id)
-        xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-        xhttp.send();
-    }
-
-    function updateRating(n) {
-        document.getElementById('rating').value = n;
-        document.getElementsByName('star').forEach(value => {
-            if (value.value <= n) {
-                value.children[0].src = "{% static 'images/star_filled.svg' %}";
-            } else {
-                value.children[0].src = "{% static 'images/star_no_filled.svg' %}";
-            }
-        });
-    }
-
-    function updateRatingAndSave(n) {
-        updateRating(n);
-
-        var formData = new FormData();
-        formData.set("rating", n)
-
-        var xhttp = new XMLHttpRequest();
-        xhttp.open('POST', "/catalog/update_rating/" + {{ movie.id }})
-        xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-        xhttp.send(formData);
-    }
-
-    function getCookie(c_name) {
-        let c_start;
-        let c_end;
-        if (document.cookie.length > 0) {
-            c_start = document.cookie.indexOf(c_name + "=");
-            if (c_start !== -1) {
-                c_start = c_start + c_name.length + 1;
-                c_end = document.cookie.indexOf(";", c_start);
-                if (c_end === -1) c_end = document.cookie.length;
-                return unescape(document.cookie.substring(c_start, c_end));
-            }
-        }
-        return "";
-    }
-
-    function formatDuration(time) {
-        let h = "0" + ((time / 3600) | 0);
-        let m = "0" + (((time % 3600) / 60) | 0);
-        let s = "0" + (((time % 3600) % 60) | 0);
-        return h.substr(-2) + ':' + m.substr(-2) + ':' + s.substr(-2);
-    }
-
-    function formatDate(timeFromEpoch) {
-        let date = new Date(timeFromEpoch * 1000);
-        let month = "0" + (date.getMonth() + 1);
-        let hours = "0" + date.getHours();
-        let minutes = "0" + date.getMinutes();
-        let seconds = "0" + date.getSeconds();
-        return date.getDate() + '/' + month.substr(-2) + '/' + date.getFullYear() + ' ' + hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-    }
-
-    function formatFileSize(size) {
-        if (size > Math.pow(1024, 3)) {
-            return (size / Math.pow(1024, 3)).toFixed(2) + " GB";
-        } else if (size > Math.pow(1024, 2)) {
-            return (size / Math.pow(1024, 2)).toFixed(2) + " MB";
-        } else if (size > 1024) {
-            return (size / 1024).toFixed(2) + " KB";
-        } else {
-            return (size | 0) + " B";
-        }
-    }
+    const STATIC_URLS = {
+        filledStar: "{% static 'images/star_filled.svg' %}",
+        emptyStar: "{% static 'images/star_no_filled.svg' %}"
+    };
 </script>
 
 </body>

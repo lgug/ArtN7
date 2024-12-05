@@ -830,3 +830,166 @@ INFO - from 127.0.0.1 at 2024-10-20 20:29:54.089726: INDEX - Opened the index pa
 INFO - from 127.0.0.1 at 2024-10-20 20:29:56.692903: SEARCH - Open Search page.
 INFO - from 127.0.0.1 at 2024-10-20 20:29:58.017475: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
 INFO - from 127.0.0.1 at 2024-10-20 20:30:00.169941: DETAILS - Open details for movie with id 15.
+INFO - from 127.0.0.1 at 2024-10-23 20:44:13.574579: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-10-23 20:44:15.391216: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-10-23 20:44:16.406909: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-10-23 20:44:39.051588: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-10-23 20:44:47.730649: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-10-23 20:47:36.290100: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-10-23 20:48:55.337965: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-10-23 20:48:56.900781: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-10-23 20:48:57.976307: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-10-23 20:48:59.691014: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-10-23 20:50:11.382147: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-10-23 20:50:41.491054: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-10-23 20:51:10.017238: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-10-26 15:53:46.413113: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-10-26 15:53:54.043707: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-10-26 15:53:54.894219: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-10-26 15:53:58.385495: DETAILS - Open details for movie with id 15.
+INFO - from 127.0.0.1 at 2024-11-09 09:47:48.976915: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-09 09:47:50.938008: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-09 09:47:51.912490: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-09 09:47:54.177441: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-09 09:55:25.204751: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-09 09:55:26.300253: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-09 09:55:27.142620: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-09 09:55:29.273513: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-11-09 09:58:15.484230: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-11-09 09:58:29.743977: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-09 09:58:31.160302: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-09 09:58:31.871099: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-09 09:58:33.653380: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-11-09 10:03:14.683705: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-09 10:03:16.303700: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-09 10:03:17.137933: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-09 10:03:22.737902: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-11-09 17:11:08.962075: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-09 17:11:10.950711: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-09 17:11:25.386377: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-09 17:11:29.613804: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-11-09 17:13:28.435688: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-09 17:13:30.563763: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-09 17:13:31.592463: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-09 17:13:34.510996: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-11-09 17:13:34.758407: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-11-13 21:15:28.359070: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-13 21:15:30.004675: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-13 21:15:31.351906: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-13 21:15:34.722143: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-13 21:16:34.528205: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-13 21:16:35.613842: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-13 21:16:36.403571: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-13 21:16:38.432100: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-13 21:22:09.048424: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-13 21:22:09.941023: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-13 21:22:11.129843: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-13 21:22:12.639098: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-13 21:22:17.188614: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 09:51:57.410166: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 09:51:58.775153: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 09:51:59.784234: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-17 09:52:03.848672: SEARCH - Start searching movies with title='j', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-17 09:52:05.453335: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 09:52:10.590225: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 09:53:13.023537: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 09:53:23.001972: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 09:55:35.307728: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 09:56:06.166809: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 09:56:22.052124: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 09:56:36.827666: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 09:57:08.271486: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 09:57:09.532511: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 09:57:10.362188: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-17 09:57:12.281462: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 09:57:55.291676: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 09:57:56.498419: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 09:57:57.297079: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-17 09:57:59.296664: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 09:59:24.355864: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 09:59:25.922764: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 09:59:27.330058: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-17 09:59:29.590119: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-11-17 10:05:20.404485: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 10:07:49.076894: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 10:07:55.911830: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 10:07:59.557070: UPLOAD - Update rating of movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 10:08:00.507168: UPLOAD - Update rating of movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 10:08:05.048769: DOWNLOAD - Start downloading of file with name Joker (Original).mkv (movie id: 13).
+INFO - from 127.0.0.1 at 2024-11-17 10:08:30.770247: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 10:10:43.488851: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 10:12:30.036814: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 10:14:54.244137: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 10:16:57.434403: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 10:17:09.235796: INTEGRITY_CHECK - Started integrity check of file with hash F1654EB75E87E8BCE64EA94E5FA2A569D890604AEAB487114BE23C81896CFDC4
+INFO - from 127.0.0.1 at 2024-11-17 10:18:59.950775: DOWNLOAD - Request downloading of all files for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 18:49:58.982753: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 18:50:00.390574: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 18:50:51.494535: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 18:50:52.477564: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 18:51:05.745940: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 18:51:07.789653: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 18:52:57.634659: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-17 18:54:34.741031: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 18:54:36.336213: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 18:55:28.814194: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 18:55:31.487989: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 18:55:32.708179: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 18:55:35.323002: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 18:56:25.461839: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 18:56:26.670229: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 18:56:27.975836: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 18:56:30.518546: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-17 18:56:33.160342: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-11-17 18:56:33.415484: DETAILS - Open details for movie with id 14.
+INFO - from 127.0.0.1 at 2024-11-17 18:56:42.917474: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 18:56:44.162397: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-17 18:58:28.808113: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 18:58:31.212364: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 19:04:57.510558: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 19:04:58.639024: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 19:05:00.404823: SEARCH - Start searching movies with title='', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-17 19:05:05.358086: SEARCH - Start searching movies with title='j', year='', saga='', director='', actor=''
+INFO - from 127.0.0.1 at 2024-11-17 19:05:14.871400: SUGGESTED - Open Suggested movies page.
+INFO - from 127.0.0.1 at 2024-11-17 19:05:19.790994: DETAILS - Open details for movie with id 13.
+INFO - from 127.0.0.1 at 2024-11-17 19:05:24.721902: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:38:21.979497: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 21:38:23.980079: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:38:24.218029: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:42:58.838335: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 21:43:04.445077: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:45:17.875275: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 21:45:19.318511: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:47:47.151746: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:48:04.538549: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:48:30.540876: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 21:48:32.959967: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 21:48:37.361167: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:48:52.116862: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:48:55.404991: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:49:44.159712: UPLOAD - Searching information from IMDb for id tt11315808.
+INFO - from 127.0.0.1 at 2024-11-17 21:53:10.054473: UPLOAD - Uploading of new file with name Sandbox (Parrot Os).ova in the temp folder.
+INFO - from 127.0.0.1 at 2024-11-17 21:53:39.277185: UPLOAD - Start to save a new movie
+INFO - from 127.0.0.1 at 2024-11-17 21:54:18.075690: UPLOAD - 16
+INFO - from 127.0.0.1 at 2024-11-17 21:54:51.046694: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:54:51.829466: UPLOAD - Open the Upload page
+INFO - from 127.0.0.1 at 2024-11-17 21:54:58.391241: INTEGRITY_CHECK - Open catalog integrity check.
+INFO - from 127.0.0.1 at 2024-11-17 21:58:35.785259: INTEGRITY_CHECK - Open catalog integrity check.
+INFO - from 127.0.0.1 at 2024-11-17 22:03:11.210012: INTEGRITY_CHECK - Open catalog integrity check.
+INFO - from 127.0.0.1 at 2024-11-17 22:03:13.407735: INTEGRITY_CHECK - Open catalog integrity check.
+INFO - from 127.0.0.1 at 2024-11-17 22:03:15.374495: INTEGRITY_CHECK - Started integrity check of movie with id 13
+INFO - from 127.0.0.1 at 2024-11-17 22:03:37.899042: INTEGRITY_CHECK - Started integrity check of movie with id 14
+INFO - from 127.0.0.1 at 2024-11-17 22:03:57.521627: INTEGRITY_CHECK - Started integrity check of movie with id 15
+INFO - from 127.0.0.1 at 2024-11-17 22:04:13.440907: INTEGRITY_CHECK - Started integrity check of movie with id 16
+INFO - from 127.0.0.1 at 2024-11-17 22:04:51.783347: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 22:04:52.264506: SUGGESTED - Open Suggested movies page.
+INFO - from 127.0.0.1 at 2024-11-17 22:04:55.861431: SUGGESTED - Open Suggested movies page.
+INFO - from 127.0.0.1 at 2024-11-17 22:04:56.737075: INDEX - Opened the index page
+INFO - from 127.0.0.1 at 2024-11-17 22:04:58.870971: SEARCH - Open Search page.
+INFO - from 127.0.0.1 at 2024-11-17 22:05:03.855947: SEARCH - Start searching movies with title='', year='', saga='', director='todd', actor=''
+INFO - from 127.0.0.1 at 2024-11-17 22:06:24.058685: DETAILS - Open details for movie with id 16.
+INFO - from 127.0.0.1 at 2024-11-17 22:08:52.955054: DETAILS - Open details for movie with id 16.
+INFO - from 127.0.0.1 at 2024-11-17 22:09:02.531296: DETAILS - Open details for movie with id 16.
+INFO - from 127.0.0.1 at 2024-11-17 22:09:04.479028: DETAILS - Open details for movie with id 16.
+INFO - from 127.0.0.1 at 2024-11-17 22:09:56.519455: INTEGRITY_CHECK - Started integrity check of file with hash 2192642E29ADB23824FDC2019DA9E0F4C55BCB0554684246062CBC1ED72E3397
+INFO - from 127.0.0.1 at 2024-11-17 22:10:17.293810: UPLOAD - Update rating of movie with id 16.

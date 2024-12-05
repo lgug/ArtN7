@@ -1,4 +1,4 @@
-function getCookie(c_name) {
+export function getCookie(c_name) {
     let c_start;
     let c_end;
     if (document.cookie.length > 0) {
@@ -13,10 +13,10 @@ function getCookie(c_name) {
     return "";
 }
 
-function showSpinner() {
+export function showSpinner() {
     document.getElementById("pageSpinner").hidden = false;
 }
 
-function hideSpinner() {
+export function hideSpinner() {
     document.getElementById("pageSpinner").hidden = true;
 }

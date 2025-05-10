@@ -16,7 +16,7 @@ import catalog.project_utils.imdb_manager
 from catalog.models import Movie, Country, Genre, Saga, Director, Screenwriter, Actor, File, FILE_TYPE_VIDEO_KEY
 from catalog.project_utils import integrity_management, logmanager, filemanager, data_validation, imdb_manager
 from catalog.project_utils.filemanager import TEMP_ROOT, \
-    TEMP_META_FILE, DATA_ROOT, TEMP_ZIP_FILE, check_temp_folder, REPORT_FILE
+    TEMP_META_FILE, DATA_ROOT, TEMP_ZIP_FILE, check_temp_folder, REPORT_FILE, clear_temp_folder
 from catalog.project_utils.http_manager import HEADER_CHUNK_NUMBER, HEADER_MOVIE_TYPE, \
     HEADER_MOVIE_TAG
 from catalog.project_utils.integrity_management import MovieSynthesis
@@ -103,6 +103,7 @@ def upload_function(request):
         logmanager.new_event(request, logmanager.LogLevel.ERROR, logmanager.Function.UPLOAD,
                              "Upload check has not passed")
         context = {"movie_id": None, "success": check, "message": message}
+        clear_temp_folder()
         return render(request, 'catalog/upload_result.html', context)
 
     local_title = request.POST["title"]
@@ -134,6 +135,7 @@ def upload_function(request):
                              f"Error trying to save a new movie: {e}")
 
         movie.delete()
+        clear_temp_folder()
         context = {"movie_id": None, "success": False, "message": str(e)}
         return render(request, 'catalog/upload_result.html', context)
 

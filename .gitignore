@@ -6,9 +6,10 @@ data/
 staticfiles/
 temp/
 info/
-__pycache__/
+**/__pycache__/**
 catalog/__pycache__/
 *.iml
+db.sqlite3
 
 # User-specific stuff
 .idea/**/workspace.xml

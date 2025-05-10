@@ -277,3 +277,35 @@ function showSpinner() {
 function hideSpinner() {
     document.getElementById("pageSpinner").hidden = true;
 }
+
+
+function sendForm(action) {
+    console.log(action);
+    let title = document.mUpload.title.value;
+    let original_title = document.mUpload.original_title.value;
+    let saga = document.mUpload.saga.value;
+    let year = document.mUpload.year.value;
+    let poster = document.mUpload.poster.value;
+    let imdbId = document.mUpload.imdb_id.value;
+    let rating = document.mUpload.rating.value;
+
+    let directors = getFormValues(document.mUpload.directors);
+    let actors = getFormValues(document.mUpload.actors);
+    let screenwriters = getFormValues(document.mUpload.screenwriters);
+    let genres = getFormValues(document.mUpload.genres);
+    
+    console.log(imdbId);
+    document.mUpload.action = action;
+    document.mUpload.submit();
+}
+
+function getFormValues(element) {
+    let result = [];
+    if (element.value) {
+        result.push(element.value);
+    } else if (element.values) {
+        result = [...element.values()].map(v => v.value);
+    }
+
+    return result;
+}

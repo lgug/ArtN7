@@ -3,6 +3,12 @@
 
 # Project-specific stuff
 data/
+staticfiles/
+temp/
+info/
+__pycache__/
+catalog/__pycache__/
+*.iml
 
 # User-specific stuff
 .idea/**/workspace.xml

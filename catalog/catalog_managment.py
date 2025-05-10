@@ -4,7 +4,7 @@ import shutil
 
 from catalog.models import File
 from catalog.project_utils.filemanager import sanitize_filename, TEMP_ROOT, check_data_folder, DATA_ROOT, \
-    clear_temp_folder, TEMP_META_FILE
+    clear_temp_folder, TEMP_META_FILE, check_temp_folder
 
 
 def save_movie_files(movie):
@@ -57,9 +57,11 @@ def sha256sum(file_path):
 
 def get_meta_file():
     elements = {}
+    if not os.path.exists(f"{TEMP_ROOT}/{TEMP_META_FILE}"):
+        return elements
+
     with open(f"{TEMP_ROOT}/{TEMP_META_FILE}", 'r') as f:
         lines = f.readlines()
-
     for line in lines:
         split = line.split(";")
         if len(split) == 3:

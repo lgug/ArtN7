@@ -23,4 +23,6 @@ urlpatterns = [
     path("download_catalog_report", views.download_catalog_report, name="download_catalog_report"),
     path("downloal_all_movie_files/<int:movie_id>", views.download_all_movie_files, name="download_all_movie_files"),
     path("file_info/<int:file_id>", views.file_info, name="file_info"),
+    path("countries", views.countries, name="countries"),
+    path("check_new_file_info", views.check_new_file_info, name="check_new_file_info"),
 ]

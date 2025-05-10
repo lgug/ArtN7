@@ -24,7 +24,7 @@ def retrieve_info_from_imdb(imdb_id):
             movie_info['year'] = json_data['aboveTheFoldData']['releaseYear']['year']
 
             countries = []
-            for c in json_data['mainColumnData']['countriesOfOrigin']['countries']:
+            for c in json_data['mainColumnData']['countriesDetails']['countries']:
                 countries.append(c['id'])
             movie_info['countries'] = countries
 

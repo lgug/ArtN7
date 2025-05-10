@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>ArtN7 - Upload new title</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'css/main-style.css' %}">
     <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.js' %}"></script>
@@ -290,6 +291,7 @@
                            name="movies">
                 </div>
             </div>
+            <span id="file_message" class="text-danger" hidden></span>
 
             <br>
             <br>
@@ -338,17 +340,25 @@
             all_genres = values;
         });
 
-    fetch("{% static 'files/countries.csv' %}")
+    fetch("/catalog/countries")
         .then(response => response.text())
         .then(data => {
+            data = JSON.parse(data);
             const select = document.getElementById('countries');
-            const values = data.split("\n");
-            values.forEach(value => {
-                let codes = value.split(";");
-                insertOptionInSelect(codes[1], select);
+            const current_countries = data['current'];
+            current_countries.forEach(value => {
+                insertOptionInSelect(value['name'], select);
 
-                all_countries_code[codes[0]] = codes[1];
-                all_countries.push(codes[1]);
+                all_countries_code[value['code']] = value['name'];
+                all_countries.push(value['name']);
+            });
+
+            const historic_countries = data['historic'];
+            historic_countries.forEach(value => {
+                insertOptionInSelect(value['name'], select);
+
+                all_countries_code[value['code']] = value['name'];
+                all_countries.push(value['name']);
             });
         });
 
@@ -391,6 +401,7 @@
         const files = document.getElementById('movie-input').files;
         const tag = document.getElementById('movie-input-tag').value;
         const type = document.getElementById('movie-input-type').value;
+        const span = document.getElementById("file_message");
 
         const uploadFileChunk = (file, start, end) => {
             return new Promise((resolve, reject) => {
@@ -434,22 +445,43 @@
             xhttp.send();
         };
 
-        uploadFile(files[0])
-            .then(() => {
-                console.log("Caricamento completato.");
+        const checkInfo = async () => {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/catalog/check_new_file_info");
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            xhttp.onload = function (response) {
+                const data = JSON.parse(response.target.response);
+                if (data['success']) {
+                    uploadFile(files[0])
+                        .then(() => {
+                            console.log("Caricamento completato.");
 
-                const file_name = files[0].name;
-                const file_size = (files[0].size / 1024).toFixed(2) + ' KB';
-                const file_type = files[0].type || 'N/A';
-                updateTable(file_name, file_size, file_type)
+                            const file_name = files[0].name;
+                            const file_size = (files[0].size / 1024).toFixed(2) + ' KB';
+                            const file_type = files[0].type || 'N/A';
+                            updateTable(file_name, file_size, file_type)
 
-                document.getElementById('movie-input').value = null;
-                hideSpinner();
-            })
-            .catch(error => {
-                console.error("Errore durante il caricamento:", error);
-            });
+                            document.getElementById('movie-input').value = null;
+                            span.hidden = true;
 
+                            hideSpinner();
+                        })
+                        .catch(error => {
+                            console.error("Errore durante il caricamento:", error);
+                        })
+                } else {
+                    console.log(data['message'])
+                    span.innerHTML = data['message']
+                    span.hidden = false;
+
+                    hideSpinner();
+                }
+            };
+
+            xhttp.send(tag);
+        };
+
+        checkInfo();
     });
 </script>
 

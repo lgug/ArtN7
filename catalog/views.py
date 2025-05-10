@@ -20,6 +20,7 @@ from catalog.project_utils.filemanager import TEMP_ROOT, \
 from catalog.project_utils.http_manager import HEADER_CHUNK_NUMBER, HEADER_MOVIE_TYPE, \
     HEADER_MOVIE_TAG
 from catalog.project_utils.integrity_management import MovieSynthesis
+from catalog.project_utils.utils import get_current_countries, get_historic_countries
 
 SEPARATOR = " · "
 
@@ -372,6 +373,13 @@ def download_all_movie_files(request, movie_id):
                          f"Request downloading of all files for movie with id {movie_id}.")
 
     folder = filemanager.build_movie_folder_name(Movie.objects.get(pk=movie_id))
+
+    # delete cache zip file
+    destination_path = f"{TEMP_ROOT}/{TEMP_ZIP_FILE}"
+    if os.path.exists(destination_path):
+        os.remove(destination_path)
+
+    # make archive
     shutil.make_archive(f"{TEMP_ROOT}/{TEMP_ZIP_FILE.split('.')[0]}",
                         f"{TEMP_ZIP_FILE.split('.')[1]}",
                         folder)
@@ -407,3 +415,23 @@ def file_info(request, file_id):
             pass
 
     return JsonResponse(info)
+
+def countries(request):
+    current = get_current_countries()
+    historic = get_historic_countries()
+
+    result = {
+        "current": [{"name": c.name, "code": c.alpha_2} for c in current],
+        "historic": [{"name": h.name, "code": h.alpha_4} for h in historic]
+    }
+
+    return JsonResponse(result)
+
+def check_new_file_info(request):
+    tag = 'Original' if len(request.body) == 0 else request.body.decode('utf-8')
+    meta = catalog.catalog_managment.get_meta_file()
+
+    if tag in [x[1] for x in meta.values()]:
+        return JsonResponse({'success': False, 'message': f"A file with tag '{tag}' already exists."})
+    else:
+        return JsonResponse({'success': True, 'message': "OK"})

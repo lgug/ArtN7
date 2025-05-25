@@ -26,7 +26,7 @@ def retrieve_info_from_imdb(imdb_id):
             countries = []
             for c in json_data['mainColumnData']['countriesDetails']['countries']:
                 countries.append(c['id'])
-            movie_info['countries'] = countries
+            movie_info['countries'] = adapt_iso_codes(countries)
 
             genres = []
             for g in json_data['aboveTheFoldData']['genres']['genres']:
@@ -51,3 +51,15 @@ def retrieve_info_from_imdb(imdb_id):
             movie_info['actors'] = actors
 
     return movie_info
+
+def adapt_iso_codes(codes):
+    result = []
+    for code in codes:
+        if code == 'XWG':   # case of West Germany
+            result.append('DEW')
+        elif code == 'XYU': # case of Yugoslavia
+            result.append('YUCS')
+        else:
+            result.append(code)
+
+    return result

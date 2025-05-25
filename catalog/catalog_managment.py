@@ -4,7 +4,7 @@ import shutil
 
 from catalog.models import File
 from catalog.project_utils.filemanager import sanitize_filename, TEMP_ROOT, check_data_folder, DATA_ROOT, \
-    clear_temp_folder, TEMP_META_FILE, check_temp_folder
+    clear_temp_folder, TEMP_META_FILE, check_temp_folder, MOVIE_FOLDER_DELIMITER
 
 
 def save_movie_files(movie):
@@ -13,8 +13,8 @@ def save_movie_files(movie):
 
     check_data_folder()
 
-    movie_folder = sanitize_filename(movie.local_title, str(movie.id), extra_char="__")
-    movie_root_path = f"{DATA_ROOT}/{movie.id}__{movie_folder}"
+    movie_folder = sanitize_filename(movie.local_title, str(movie.id), extra_char=f"{MOVIE_FOLDER_DELIMITER}")
+    movie_root_path = f"{DATA_ROOT}/{movie.id}{MOVIE_FOLDER_DELIMITER}{movie_folder}"
     if not os.path.exists(movie_root_path):
         os.mkdir(movie_root_path)
 

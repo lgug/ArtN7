@@ -10,6 +10,7 @@ info/
 catalog/__pycache__/
 *.iml
 db.sqlite3
+.idea/
 
 # User-specific stuff
 .idea/**/workspace.xml

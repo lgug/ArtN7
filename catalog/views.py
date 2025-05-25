@@ -228,9 +228,9 @@ def download_file(request, movie_id, name):
     logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.DOWNLOAD,
                          f"Start downloading of file with name {name} (movie id: {movie_id}).")
 
-    folder = [x for x in os.listdir(DATA_ROOT) if x.startswith(str(movie_id))]
-    if len(folder) > 0:
-        return FileResponse(open(f"{DATA_ROOT}/{folder[0]}/{name}", 'rb'), as_attachment=True)
+    file = File.objects.get(movie_id=movie_id, filename=name)
+    if file.folder is not None and len(file.folder) > 0:
+        return FileResponse(open(f"{file.folder}/{file.filename}", 'rb'), as_attachment=True)
     else:
         return None
 
@@ -374,7 +374,10 @@ def download_all_movie_files(request, movie_id):
     logmanager.new_event(request, logmanager.LogLevel.INFO, logmanager.Function.DOWNLOAD,
                          f"Request downloading of all files for movie with id {movie_id}.")
 
-    folder = filemanager.build_movie_folder_name(Movie.objects.get(pk=movie_id))
+    folders = File.objects.filter(movie_id=movie_id).values_list('folder').distinct()
+    if len(folders) != 1:
+        return JsonResponse({'status': 'error', 'message': 'Movie has more than one folder.'})
+    folder = folders[0][0]
 
     # delete cache zip file
     destination_path = f"{TEMP_ROOT}/{TEMP_ZIP_FILE}"

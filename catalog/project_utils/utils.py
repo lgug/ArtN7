@@ -9,7 +9,8 @@ def get_historic_countries():
     historic = list(historic_countries)
 
     # workaround for West Germany code
-    historic.append(pycountry.db.Country(alpha_2='XWG', alpha_3='XWG', alpha_4='XWG', name='West Germany'))
+    historic.append(pycountry.db.Country(alpha_2='DEW', alpha_3='DEW', alpha_4='DEW', name='West Germany'))
+    historic.append(pycountry.db.Country(alpha_2='XK', alpha_3='XKV', alpha_4='XKV', name='Kosovo'))
 
     return historic
 
@@ -19,8 +20,12 @@ def get_country_name(code, known_name=None):
     historic = pycountry.historic_countries
 
     # workaround for West Germany code
-    if code == 'XWG':
+    if code == 'DEW':
         return "West Germany"
+
+    # workaround for Kosovo code
+    if code == 'XK' or code == 'XKV':
+        return "Kosovo"
 
     if len(code) == 2:
         result = countries.get(alpha_2=code)

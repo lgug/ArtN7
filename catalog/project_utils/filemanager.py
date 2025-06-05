@@ -23,7 +23,7 @@ def sanitize_filename(filename, tag, extra_char=" ()"):
                 .replace('/', '')
                 .replace('\\', '')
                 .replace('|', '')
-                .replace('?', '*'))
+                .replace('?', ''))
     tag = tag + extra_char
 
     if len(filename) == 0:

@@ -26,6 +26,14 @@ def sanitize_filename(filename, tag, extra_char=" ()"):
                 .replace('?', ''))
     tag = tag + extra_char
 
+    # check if starts with points
+    while len(filename) > 0 and filename[0] == '.':
+        filename = filename[1:]
+
+    # check if ends with points
+    while len(filename) > 0 and filename[-1] == '.':
+        filename = filename[:-1]
+
     if len(filename) == 0:
         filename = "Unencodable movie title"
 

@@ -36,7 +36,7 @@ def delete_movie_file(modeladmin, request, queryset):
 
 class MovieAdmin(admin.ModelAdmin):
     actions = [delete_movie_and_files]
-    list_display = ("__str__", "view_actors_list", "view_directors_list", "view_screenwriters_list", "view_files_list")
+    list_display = ("id", "__str__", "view_actors_list", "view_directors_list", "view_screenwriters_list", "view_files_list")
 
     def view_actors_list(self, obj):  # TODO implementare il link agli attori
         count = obj.actor_set.count()
@@ -65,21 +65,34 @@ class MovieAdmin(admin.ModelAdmin):
 
 
 class FileAdmin(admin.ModelAdmin):
+    list_display = ("id", "__str__", "movie")
     actions = [delete_movie_file]
 
 
 class ActorAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "movie")
+    list_display = ("id", "__str__", "movie")
 
 
 class DirectorAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "movie")
+    list_display = ("id", "__str__", "movie")
+
+
+class GenreAdmin(admin.ModelAdmin):
+    list_display = ("id", "__str__", "movie")
+
+
+class ScreenwriterAdmin(admin.ModelAdmin):
+    list_display = ("id", "__str__", "movie")
+
+
+class SagaAdmin(admin.ModelAdmin):
+    list_display = ("id", "__str__", "movie")
 
 
 admin.site.register(File, FileAdmin)
 admin.site.register(Movie, MovieAdmin)
-admin.site.register(Genre)
+admin.site.register(Genre, GenreAdmin)
 admin.site.register(Actor, ActorAdmin)
 admin.site.register(Director, DirectorAdmin)
-admin.site.register(Screenwriter)
-admin.site.register(Saga)
+admin.site.register(Screenwriter, ScreenwriterAdmin)
+admin.site.register(Saga, SagaAdmin)
